@@ -29,26 +29,36 @@ void GestorArchivo::cargarEquipos( Equipo*& equipos, const string& nombreArchivo
 
         if (!isdigit(linea[0]) || linea.empty()) continue;
 
-        string cadena = "";
-        for (short i = 0; i < linea.length(); i++){
-            if (linea[i] == ';'){
-                numerodeCara++;
-                cadena = "";
+        const string formatLinea = ";" + linea;
+        short   numOcurrecias = 0;
+        short   indexCaracter = 0;
 
-                if (numerodeCara == 1){
-                    equipos[indexEquipos].setNombre(cadena);
-                }
+        while (numOcurrecias < 10){
 
-                continue;
-            }
+            size_t   posicion1 = formatLinea.find(";", indexCaracter);
+            size_t   posicion2 = formatLinea.find(";", posicion1 + 1);
 
-             cadena += linea[i];
+            string  cadena = formatLinea.substr(posicion1 + 1,  posicion2 - posicion1 - 1);
+            //cout << posicion1 << "   "  << posicion2 <<  "  " << cadena <<  "  " <<  numOcurrecias << endl;
 
+            if (numOcurrecias == 0) equipos[indexEquipos].setRankinFifa(stoi(cadena));
+            else if (numOcurrecias == 1) equipos[indexEquipos].setPais(cadena);
+            else if (numOcurrecias == 2) equipos[indexEquipos].setDirector(cadena);
+            else if (numOcurrecias == 3) equipos[indexEquipos].setFederacion(cadena);
+            else if (numOcurrecias == 4) equipos[indexEquipos].setConfederacion(cadena);
+            else if (numOcurrecias == 5) equipos[indexEquipos].setGolesAFavor(stoi(cadena));
+            else if (numOcurrecias == 6) equipos[indexEquipos].setGolesEnContra(stoi(cadena));
+            else if (numOcurrecias == 7) equipos[indexEquipos].setPartidosGanados(stoi(cadena));
+            else if (numOcurrecias == 8) equipos[indexEquipos].setPartidosEmpatados(stoi(cadena));
+            else if (numOcurrecias == 9) equipos[indexEquipos].setPartidosPerdidos(stoi(cadena));
+
+            indexCaracter = posicion2;
+            numOcurrecias++;
         }
-
 
          indexEquipos++;
     }
+
 
     archivo.close();
 }

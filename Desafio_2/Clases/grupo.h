@@ -7,6 +7,8 @@ class Grupo{
     public:
         Grupo();
 
+
+        ~Grupo();
     private:
         char id;
         Equipo* equipos;
