@@ -9,6 +9,8 @@ using namespace std;
 
 int main()
 {
+    srand(time(0));
+
     cout << " ============================ " << endl;
     cout << "          UdeAWorldCup                                 "  << endl;
     cout << " ============================" << endl;
@@ -17,7 +19,8 @@ int main()
 
     cout << "Simulando Eliminatorias de grupos..." << endl;
 
-    srand(::time(0));
+    short numeroGrupos = 12;
+    const string letras      = "ABCDEFGHIJKL";
 
     // ========= I ================ //
     const string archivoEquipos = "selecciones_clasificadas_mundial.csv";
@@ -25,7 +28,7 @@ int main()
 
     const short  numeroEquipos = gestorArchivo->getNumeroDeEquipos();
     Equipo* listaEquipos = new Equipo[numeroEquipos];
-    Grupo*  listaGrupos  = new Grupo[12];
+    Grupo*  listaGrupos  = new Grupo[numeroGrupos];
 
     gestorArchivo->cargarEquipos(listaEquipos, archivoEquipos); //llenar datos de los equipos en la lista de equipos
 
@@ -69,7 +72,13 @@ int main()
     }
 
     //generar los 12 grupos con 4 equipos de diferente bombos
+    for (short  i = 0; i < numeroGrupos; i++){
+        listaGrupos->setId(letras[i]);
+        listaGrupos->selecEquipos(bombos, listaEquipos, numeroEquipos);
 
+
+
+    }
 
 
 
