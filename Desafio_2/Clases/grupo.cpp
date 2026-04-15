@@ -14,7 +14,7 @@ void  Grupo::selecEquipos(short (&bombos)[4][12], Equipo *&listaEquipos, const s
     while (bomboFial < 4){
 
         short intentos = 0;
-        while (intentos < 200){
+        while (intentos < 320){
             intentos++;
             random = rand() % 12;
 
@@ -23,6 +23,9 @@ void  Grupo::selecEquipos(short (&bombos)[4][12], Equipo *&listaEquipos, const s
 
 
             bool encontrado = false;
+            bool yaExiste = false;
+            short cuantosUEFA = 0;
+
             for (short c = 0; c < numEquipos; c++){
                 if (listaEquipos[c].getRankinFifa() == rankingFifa){
                     confederaciones[bomboFial] = listaEquipos[c].getConfederacion();
@@ -33,10 +36,19 @@ void  Grupo::selecEquipos(short (&bombos)[4][12], Equipo *&listaEquipos, const s
 
             if(!encontrado) continue;
 
-            bool yaExiste = false;
+            for (short c = 0; c < 4; c++) if (confederaciones[c] == "UEFA") cuantosUEFA++;
 
             for (short c = 0; c < 4; c++){
-                if (c != bomboFial && confederaciones[c] == confederaciones[bomboFial]) yaExiste = true;
+                if (confederaciones[c] == "") continue;
+
+                if (c != bomboFial && confederaciones[c] == confederaciones[bomboFial]) {
+                    if (confederaciones[c] == "UEFA" && cuantosUEFA <= 2) {
+                        yaExiste = false;
+                        break;
+                    }
+
+                    yaExiste = true;
+                }
             }
 
             if (yaExiste) continue;
@@ -50,17 +62,13 @@ void  Grupo::selecEquipos(short (&bombos)[4][12], Equipo *&listaEquipos, const s
         bomboFial++;
     }
 
-    cout << "hola" << endl;
-
-    for (short c = 0; c <4; c++){
-        cout << equipos[c] << "   , ";
-    }
-
-    cout << endl;
+    this->equiposRF = equipos;
 }
 
-
 Grupo::~Grupo(){
+    if (this->equiposRF != nullptr){
+        delete[] this->equiposRF;
+    }
 }
 
 

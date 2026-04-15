@@ -71,16 +71,38 @@ int main()
         salto++;
     }
 
-    //generar los 12 grupos con 4 equipos de diferente bombos
+    //generar los 12 grupos con 4 equipos de diferente bombos (clasificatorias)
+
+    cout << "---------------------------------------------------------------------------------------------------------------" << endl;
+    cout << "|                                  CONFORMACION DE GRUPOS                      |" << endl;
+    cout << "---------------------------------------------------------------------------------------------------------------" << endl;
+
+
     for (short  i = 0; i < numeroGrupos; i++){
-        listaGrupos->setId(letras[i]);
-        listaGrupos->selecEquipos(bombos, listaEquipos, numeroEquipos);
+        listaGrupos[i].setId(letras[i]);
+        listaGrupos[i].selecEquipos(bombos, listaEquipos, numeroEquipos);
 
 
+        cout <<  "|   "  <<  listaGrupos[i].getId()     << "   => ";
 
+        for (short c = 0; c < 4; c++){
+            string nombreEquipo = "";
+            string nombreConfere = "";
+
+            for (short f = 0; f < numeroEquipos; f++){
+                if (listaEquipos[f].getRankinFifa() == listaGrupos[i].getEquiposRF()[c]){
+                    nombreEquipo = listaEquipos[f].getPais();
+                    nombreConfere = listaEquipos[f].getConfederacion();
+                    break;
+                }
+            }
+
+            cout << " " << nombreEquipo << "  (" << nombreConfere  << "),  ";
+        }
+        cout << endl;
     }
 
-
+     cout << "---------------------------------------------------------------------------------------------------------------" << endl;
 
     for (short i = 0; i <4; i++){
         for (short f = 0; f < 12; f++){
@@ -89,6 +111,10 @@ int main()
 
         cout << endl;
     }
+
+    // ============== III ===========================
+
+
 
     delete gestorArchivo;
     delete[] listaEquipos;
