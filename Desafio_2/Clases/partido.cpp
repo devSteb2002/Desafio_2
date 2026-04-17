@@ -1,3 +1,5 @@
 #include "partido.h"
 
-Partido::Partido() {}
+Partido::Partido(){
+
+}

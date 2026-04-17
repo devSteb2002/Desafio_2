@@ -2,14 +2,12 @@
 #include "Clases/gestorarchivo.h"
 #include "Clases/jugador.h"
 #include "Clases/grupo.h"
-#include <cstdlib>
-#include <ctime>
+#include "Clases//partido.h"
 
 using namespace std;
 
 int main()
 {
-    srand(time(0));
 
     cout << " ============================ " << endl;
     cout << "          UdeAWorldCup                                 "  << endl;
@@ -113,6 +111,21 @@ int main()
     }
 
     // ============== III ===========================
+    //  a) Eliminatorias de grupo
+    // 6 partidos por grupos
+    short  partidosPorGrupo = 6;
+    short  diasTranscurridos = 0;
+    const string fechaInicio = "20/06/2026";
+
+    Partido* listaPartidos = new Partido[12*partidosPorGrupo];
+
+    for (short c = 0; c < partidosPorGrupo * 12; c++){
+
+    }
+
+
+
+
 
 
 
