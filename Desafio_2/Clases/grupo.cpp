@@ -1,6 +1,5 @@
 #include "grupo.h"
-#include <cstdlib>
-#include <ctime>
+#include <random>
 
 Grupo::Grupo() {}
 
@@ -8,26 +7,35 @@ void  Grupo::selecEquipos(short (&bombos)[4][12], Equipo *&listaEquipos, const s
 
     short  bomboFial = 0;
     short *equipos = new short[4];
-    string confederaciones[4] = {"", "", "", ""};
     short random;
 
-    while (bomboFial < 4){
+    random_device rd;
+    mt19937 gen(rd());
+    uniform_int_distribution<> dis(0, 11);
 
-        short intentos = 0;
-        while (intentos < 320){
-            intentos++;
-            random = rand() % 12;
+    while (bomboFial < 4){ // generacion aleatoria de los equipos segun este grupo
+        string confederaciones[4] = {"", "", "", ""};
+        bool   confValidas = true;
+
+        for (short c = 0; c < 4; c++){
+            if (confederaciones[c] == "") {
+                confValidas = false;
+                break;
+            }
+        }
+
+        while (!confValidas){
+            random = dis(gen);
 
             if (bombos[bomboFial][random] == -1) continue;
+
             short rankingFifa  = bombos[bomboFial][random];
-
-
             bool encontrado = false;
             bool yaExiste = false;
             short cuantosUEFA = 0;
 
             for (short c = 0; c < numEquipos; c++){
-                if (listaEquipos[c].getRankinFifa() == rankingFifa){
+                if (listaEquipos[c].getRankinFifa() == rankingFifa){          
                     confederaciones[bomboFial] = listaEquipos[c].getConfederacion();
                     encontrado = true;
                     break;
@@ -60,6 +68,24 @@ void  Grupo::selecEquipos(short (&bombos)[4][12], Equipo *&listaEquipos, const s
         }
 
         bomboFial++;
+    }
+
+    //hacer que el equipo de USA quede en el bombo 1
+    short rankingFifaUsa;
+    for (short f = 0; f < numEquipos; f++){
+        if (listaEquipos[f].getPais() == "United States"){
+            rankingFifaUsa = listaEquipos[f].getRankinFifa();
+            break;
+        }
+    }
+
+    for (short c = 0; c < 4; c++){
+        if (equipos[c] == rankingFifaUsa && c > 0){
+            short tempRanking = equipos[0];
+            equipos[0] = rankingFifaUsa;
+            equipos[c] = tempRanking;
+            break;
+        }
     }
 
     this->equiposRF = equipos;
