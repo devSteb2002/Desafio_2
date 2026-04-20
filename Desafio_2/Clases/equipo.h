@@ -41,6 +41,9 @@ class Equipo {
 
         ~Equipo();
 
+        short getPartidosJugados() const;
+        void setPartidosJugados(short newPartidosJugados);
+
     private:
         string       confederacion;
         string       federacion;
@@ -52,13 +55,13 @@ class Equipo {
         short        partidosGanados;
         short        partidosEmpatados;
         short        partidosPerdidos;
+        short        partidosJugados = 0;
         short        tarjetasAmarillas;
         short        tarjetasRojas;
         short        cantidadFaltas;
         Jugador*  juagores;
         bool         eliminado = false;
-        string       fase = "NA";
-
+        string       fase = "Eliminatorias";
 };
 
 #endif // EQUIPO_H

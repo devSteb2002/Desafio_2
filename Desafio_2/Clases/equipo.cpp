@@ -8,6 +8,16 @@ Equipo:: ~Equipo(){
     if (this->juagores != nullptr) delete[] this->juagores;
 }
 
+short Equipo::getPartidosJugados() const
+{
+    return partidosJugados;
+}
+
+void Equipo::setPartidosJugados(short newPartidosJugados)
+{
+    partidosJugados = newPartidosJugados;
+}
+
 string Equipo::getConfederacion() const
 {
     return confederacion;
