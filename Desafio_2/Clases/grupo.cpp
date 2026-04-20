@@ -50,7 +50,7 @@ void  Grupo::selecEquipos(short (&bombos)[4][12], Equipo *&listaEquipos, const s
                 if (confederaciones[c] == "") continue;
 
                 if (c != bomboFial && confederaciones[c] == confederaciones[bomboFial]) {
-                    if (confederaciones[c] == "UEFA" && cuantosUEFA <= 2) {
+                    if (confederaciones[c] == "UEFA" && cuantosUEFA < 2) {
                         yaExiste = false;
                         break;
                     }
