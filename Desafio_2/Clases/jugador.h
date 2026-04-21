@@ -8,6 +8,7 @@ class Jugador{
     public:
         Jugador();
 
+        void actualizarDatos(const short&  goles, const short& amarillas, const short& rojas, const short& faltas, const string& etapaEnQueJuega);
 
 
         string getNombre() const;
@@ -33,6 +34,9 @@ class Jugador{
         bool getJuega() const;
         void setJuega(bool newJuega);
 
+        string getEtapaEnQueJuega() const;
+        void setEtapaEnQueJuega(const string &newEtapaEnQueJuega);
+
     private:
         string    nombre;
         string    apellido;
@@ -44,6 +48,8 @@ class Jugador{
         short     caTarAmarilla = 0;
         short     caTarRojas  = 0;
         short     caFaltas  = 0;
+        short     posesionBalon = 0;
+        string    etapaEnQueJuega = "";
         bool       juega;
 };
 

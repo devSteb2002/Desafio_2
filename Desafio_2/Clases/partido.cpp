@@ -21,12 +21,12 @@ void Partido::generarFecha(const short &dia){
     }
 }
 
-void Partido::simularOcurrencia(Equipo *& listaEquipos, const short &numEquipos){
+void Partido::simularOcurrencia(Equipo *& listaEquipos, const short &numEquipos, const string &etapa){
     const float u = 1.35;
     const float a = 0.6;
     const float B = 0.4;
-    float goleEsperadosEquipo1;
-    float golesEsperadosEquipo2;
+    float goleEsperadosEquipo1 = 0.0;
+    float golesEsperadosEquipo2 = 0.0;
 
     for (short i = 0; i < numEquipos; i++){
         if (listaEquipos[i].getRankinFifa() == this->rankingFifaequip1){
@@ -44,6 +44,9 @@ void Partido::simularOcurrencia(Equipo *& listaEquipos, const short &numEquipos)
         }
     }
 
+    short *listaJugadoresA = new short[11];
+    short *listaJugadoresB = new short[11];
+
     for (short i = 0; i < numEquipos; i++){
         if (listaEquipos[i].getRankinFifa() == this->rankingFifaequip1){
             if (goleEsperadosEquipo1 > golesEsperadosEquipo2){
@@ -55,6 +58,8 @@ void Partido::simularOcurrencia(Equipo *& listaEquipos, const short &numEquipos)
             else listaEquipos[i].setPartidosEmpatados(listaEquipos[i].getPartidosEmpatados() + 1);
 
             listaEquipos[i].setPartidosJugados(listaEquipos[i].getPartidosJugados() + 1);
+            listaEquipos[i].seleccionarJugadores(listaJugadoresA);
+            listaEquipos[i].metricasJugadores(listaJugadoresA, goleEsperadosEquipo1, etapa);
         }
 
         if (listaEquipos[i].getRankinFifa() == this->rankingFifaequip2){
@@ -67,8 +72,16 @@ void Partido::simularOcurrencia(Equipo *& listaEquipos, const short &numEquipos)
             else listaEquipos[i].setPartidosEmpatados(listaEquipos[i].getPartidosEmpatados() + 1);
 
             listaEquipos[i].setPartidosJugados(listaEquipos[i].getPartidosJugados() + 1);
+            listaEquipos[i].seleccionarJugadores(listaJugadoresB);
+            listaEquipos[i].metricasJugadores(listaJugadoresB, golesEsperadosEquipo2, etapa);
         }
     }
+
+
+
+
+    delete[] listaJugadoresA;
+    delete[] listaJugadoresB;
 }
 
 
