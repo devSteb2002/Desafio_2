@@ -10,6 +10,10 @@ class Equipo {
     public:
         Equipo();
 
+        void seleccionarJugadores(short *& listaJugadores);
+        void metricasJugadores(short *& listaJugadores, const float& golesEsperados, const string&etapa);
+        short obtenerGoleador();
+
         string getConfederacion() const;
         void setConfederacion(const string &newConfederacion);
         string getPais() const;
@@ -28,12 +32,6 @@ class Equipo {
         void setPartidosEmpatados(short newPartidosEmpatados);
         short getPartidosPerdidos() const;
         void setPartidosPerdidos(short newPartidosPerdidos);
-        short getTarjetasAmarillas() const;
-        void setTarjetasAmarillas(short newTarjetasAmarillas);
-        short getTarjetasRojas() const;
-        void setTarjetasRojas(short newTarjetasRojas);
-        short getCantidadFaltas() const;
-        void setCantidadFaltas(short newCantidadFaltas);
         Jugador *getJuagores() const;
         void setJuagores(Jugador *newJuagores);
         string getFederacion() const;
@@ -43,6 +41,9 @@ class Equipo {
 
         short getPartidosJugados() const;
         void setPartidosJugados(short newPartidosJugados);
+
+        short getPuntos() const;
+        void setPuntos(short newPuntos);
 
     private:
         string       confederacion;
@@ -56,12 +57,11 @@ class Equipo {
         short        partidosEmpatados;
         short        partidosPerdidos;
         short        partidosJugados = 0;
-        short        tarjetasAmarillas;
-        short        tarjetasRojas;
-        short        cantidadFaltas;
+        short        puntos;
         Jugador*  juagores;
         bool         eliminado = false;
         string       fase = "Eliminatorias";
+
 };
 
 #endif // EQUIPO_H

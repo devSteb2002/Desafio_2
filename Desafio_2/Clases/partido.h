@@ -9,7 +9,7 @@ class Partido{
     Partido();
 
         void  generarFecha(const short &dia);
-        void  simularOcurrencia(Equipo *& listaEquipos, const short &numEquipos);
+        void  simularOcurrencia(Equipo *& listaEquipos, const short &numEquipos, const string& etapa);
 
         string getFecha() const;
         void setFecha(const string &newFecha);

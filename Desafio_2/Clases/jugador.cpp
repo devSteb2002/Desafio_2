@@ -2,6 +2,15 @@
 
 Jugador::Jugador() {}
 
+
+void Jugador::actualizarDatos(const short&  goles, const short& amarillas, const short& rojas, const short& faltas, const string &etapaEnQueJuega){
+    this->setNumeroGoles(this->getNumeroGoles() + goles);
+    this->setCaTarAmarilla(this->getCaTarAmarilla() + amarillas);
+    this->setCaTarRojas(this->getCaTarRojas() + rojas);
+    this->setCaFaltas(this->getCaFaltas() + faltas);
+    this->setEtapaEnQueJuega(etapaEnQueJuega);
+}
+
 string Jugador::getNombre() const
 {
     return nombre;
@@ -110,6 +119,16 @@ bool Jugador::getJuega() const
 void Jugador::setJuega(bool newJuega)
 {
     juega = newJuega;
+}
+
+string Jugador::getEtapaEnQueJuega() const
+{
+    return etapaEnQueJuega;
+}
+
+void Jugador::setEtapaEnQueJuega(const string &newEtapaEnQueJuega)
+{
+    etapaEnQueJuega = newEtapaEnQueJuega;
 }
 
 
