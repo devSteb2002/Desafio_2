@@ -17,6 +17,8 @@ class Grupo{
         short *getEquiposRF() const;
         void setEquiposRF(short *newEquiposRF);
 
+        void ordenarPorPuntos(Equipo* listaGlobalEquipos, short totalEquipos);
+
          ~Grupo();
     private:
         char id;
