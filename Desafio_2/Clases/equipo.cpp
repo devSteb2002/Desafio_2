@@ -156,6 +156,16 @@ void Equipo::setPuntos(short newPuntos)
     puntos = newPuntos;
 }
 
+string Equipo::getFase() const
+{
+    return fase;
+}
+
+void Equipo::setFase(const string &newFase)
+{
+    fase = newFase;
+}
+
 string Equipo::getConfederacion() const
 {
     return confederacion;
