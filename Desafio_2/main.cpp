@@ -170,6 +170,9 @@ int main()
         }
     }
 
+    for (short i = 0; i < numeroGrupos; i++) {
+        listaGrupos[i].ordenarPorPuntos(listaEquipos, numeroEquipos);}
+
     //impresion de los partidos de la eliminatoria de grupos
     for (short i = 0; i < 12; i++){
         for (short c = 0; c < 6; c++){
@@ -234,14 +237,115 @@ int main()
         cout << "----------------------------------------------------------------------" << endl;
         cout << endl;
     }
+    
 
 
     //definir cuales pasan a la siguiente ronda
 
     for (short c = 0; c < 12; c++) delete[] matrixPartidos[c];
-
-
     delete[] matrixPartidos;
+
+    for (short c = 0; c < 12; c++) {
+        delete[] matrixPartidos[c];
+    }
+    delete[] matrixPartidos;
+
+
+    Equipo** clasificados32 = new Equipo*[32];
+    short contC = 0;
+
+    for (short i = 0; i < 12; i++) {
+        short rf1 = listaGrupos[i].getEquiposRF()[0];
+        short rf2 = listaGrupos[i].getEquiposRF()[1];
+        for (short e = 0; e < numeroEquipos; e++) {
+            if (contC < 32) {
+
+                if (listaEquipos[e].getRankinFifa() == rf1) clasificados32[contC++] = &listaEquipos[e];
+                if (contC < 32 && listaEquipos[e].getRankinFifa() == rf2) clasificados32[contC++] = &listaEquipos[e];
+            }
+        }
+    }
+
+
+    Equipo** terceros = new Equipo*[12];
+    for (short i = 0; i < 12; i++) {
+        short rf3 = listaGrupos[i].getEquiposRF()[2];
+        for (short e = 0; e < numeroEquipos; e++) {
+            if (listaEquipos[e].getRankinFifa() == rf3) terceros[i] = &listaEquipos[e];
+        }
+    }
+
+    for (short i = 0; i < 11; i++) {
+        for (short j = 0; j < 11 - i; j++) {
+            if (j + 1 < 12) {
+                if (terceros[j]->getPuntos() < terceros[j+1]->getPuntos()) {
+                    Equipo* temp = terceros[j]; // temp ahora es puntero
+                    terceros[j] = terceros[j+1];
+                    terceros[j+1] = temp;
+                }
+            }
+        }
+    }
+
+
+    Equipo** cabezas = new Equipo*[12];
+    Equipo** segundos = new Equipo*[12];
+
+    for (short i = 0; i < 12; i++) {
+        // Verificamos que no nos salgamos del índice 31
+        if ((i * 2 + 1) < 32) {
+            cabezas[i] = clasificados32[i * 2];
+            segundos[i] = clasificados32[i * 2 + 1];
+        }
+    }
+
+    // 2. Ordenar segundos (Solo si no son nulos)
+    for (short i = 0; i < 11; i++) {
+        for (short j = 0; j < 11 - i; j++) {
+            if (segundos[j] != nullptr && segundos[j+1] != nullptr) { // ESCUDO
+                if (segundos[j]->getPuntos() < segundos[j+1]->getPuntos()) {
+                    Equipo* temp = segundos[j];
+                    segundos[j] = segundos[j+1];
+                    segundos[j+1] = temp;
+                }
+            }
+        }
+    }
+
+
+    cout << "\n==========================================================" << endl;
+    cout << "          CRUCES DE DIECISEISAVOS DE FINAL                " << endl;
+    cout << "==========================================================" << endl;
+
+    short numP = 1;
+
+
+    for (short i = 0; i < 8; i++) {
+        cout << "P" << setw(2) << numP++ << ": " << left << setw(20)
+        << cabezas[i]->getPais() << " vs " << terceros[i]->getPais() << " (C vs T)" << endl;
+    }
+
+
+    for (short i = 8; i < 12; i++) {
+        cout << "P" << setw(2) << numP++ << ": " << left << setw(20)
+        << cabezas[i]->getPais() << " vs " << segundos[i]->getPais() << " (C vs S)" << endl;
+    }
+
+
+    for (short i = 0; i < 4; i++) {
+        cout << "P" << setw(2) << numP++ << ": " << left << setw(20)
+        << segundos[i]->getPais() << " vs " << segundos[7-i]->getPais() << " (S vs S)" << endl;
+    }
+
+    cout << "==========================================================" << endl;
+
+
+
+    
+    
+    
+    delete[] terceros;
+    delete[] clasificados32;
     delete gestorArchivo;
     delete[] listaEquipos;
     delete[] listaGrupos;
