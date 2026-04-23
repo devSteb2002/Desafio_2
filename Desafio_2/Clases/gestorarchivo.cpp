@@ -64,7 +64,7 @@ void GestorArchivo::cargarEquipos( Equipo*& equipos, const string& nombreArchivo
 }
 
 void GestorArchivo::guardarEquipos(Equipo*& equipos, const string& nombreArchivo) {
-    // Abrimos el archivo en modo truncar (sobrescribir) para actualizar los datos
+    
     ofstream archivo(nombreArchivo);
 
     if (!archivo.is_open()) {
