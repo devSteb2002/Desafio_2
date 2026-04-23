@@ -63,8 +63,38 @@ void GestorArchivo::cargarEquipos( Equipo*& equipos, const string& nombreArchivo
     archivo.close();
 }
 
-void GestorArchivo::guardarEquipos(Equipo*& equipos, const string& nombreArchivo ){
+void GestorArchivo::guardarEquipos(Equipo*& equipos, const string& nombreArchivo) {
+    // Abrimos el archivo en modo truncar (sobrescribir) para actualizar los datos
+    ofstream archivo(nombreArchivo);
 
+    if (!archivo.is_open()) {
+        cout << "ERROR: No se pudo abrir el archivo para guardar equipos." << endl;
+        return;
+    }
+
+
+    archivo << "Ranking;Pais;Director;Federacion;Confederacion;GolesAFavor;GolesEnContra;PartidosGanados;PartidosEmpatados;PartidosPerdidos" << endl;
+
+
+    for (short i = 0; i < this->getNumeroDeEquipos(); i++) {
+        archivo << equipos[i].getRankinFifa() << ";"
+                << equipos[i].getPais() << ";"
+                << equipos[i].getDirector() << ";"
+                << equipos[i].getFederacion() << ";"
+                << equipos[i].getConfederacion() << ";"
+                << equipos[i].getGolesAFavor() << ";"
+                << equipos[i].getGolesEnContra() << ";"
+                << equipos[i].getPartidosGanados() << ";"
+                << equipos[i].getPartidosEmpatados() << ";"
+                << equipos[i].getPartidosPerdidos();
+
+        if (i < this->getNumeroDeEquipos() - 1) {
+            archivo << endl;
+        }
+    }
+
+    archivo.close();
+    cout << "Datos de equipos actualizados correctamente en: " << nombreArchivo << endl;
 }
 
 
