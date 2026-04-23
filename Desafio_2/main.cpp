@@ -280,12 +280,6 @@ int main()
     for (short c = 0; c < 12; c++) delete[] matrixPartidos[c];
     delete[] matrixPartidos;
 
-    for (short c = 0; c < 12; c++) {
-        delete[] matrixPartidos[c];
-    }
-    delete[] matrixPartidos;
-
-
     Equipo** clasificados32 = new Equipo*[32];
     short contC = 0;
 

@@ -45,6 +45,9 @@ class Equipo {
         short getPuntos() const;
         void setPuntos(short newPuntos);
 
+        string getFase() const;
+        void setFase(const string &newFase);
+
     private:
         string       confederacion;
         string       federacion;
