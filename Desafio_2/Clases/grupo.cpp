@@ -117,3 +117,50 @@ void Grupo::setEquiposRF(short *newEquiposRF)
 {
     equiposRF = newEquiposRF;
 }
+
+
+void Grupo::ordenarPorPuntos(Equipo* listaGlobalEquipos, short totalEquipos) {
+    // Usamos burbuja para ordenar los 4 equipos guardados en equiposRF
+    for (short i = 0; i < 3; i++) {
+        for (short j = 0; j < 3 - i; j++) {
+            
+            // Buscamos los punteros a los objetos Equipo correspondientes a los Rankings en la lista global
+            Equipo* eqA = nullptr;
+            Equipo* eqB = nullptr;
+
+            for (short k = 0; k < totalEquipos; k++) {
+                if (listaGlobalEquipos[k].getRankinFifa() == equiposRF[j]) eqA = &listaGlobalEquipos[k];
+                if (listaGlobalEquipos[k].getRankinFifa() == equiposRF[j + 1]) eqB = &listaGlobalEquipos[k];
+            }
+
+            if (eqA != nullptr && eqB != nullptr) {
+                // Calculamos Puntos y Diferencia de Goles
+                short ptsA = eqA->getPartidosGanados() * 3 + eqA->getPartidosEmpatados();
+                short ptsB = eqB->getPartidosGanados() * 3 + eqB->getPartidosEmpatados();
+                short dgA = eqA->getGolesAFavor() - eqA->getGolesEnContra();
+                short dgB = eqB->getGolesAFavor() - eqB->getGolesEnContra();
+
+                bool intercambio = false;
+
+                // CRITERIOS DE DESEMPATE:
+                if (ptsA < ptsB) {
+                    intercambio = true;
+                } else if (ptsA == ptsB) {
+                    if (dgA < dgB) {
+                        intercambio = true;
+                    } else if (dgA == dgB) {
+                        if (eqA->getGolesAFavor() < eqB->getGolesAFavor()) {
+                            intercambio = true;
+                        }
+                    }
+                }
+
+                if (intercambio) {
+                    short temp = equiposRF[j];
+                    equiposRF[j] = equiposRF[j + 1];
+                    equiposRF[j + 1] = temp;
+                }
+            }
+        }
+    }
+}
