@@ -46,4 +46,6 @@ class Partido{
         short     dia = 0;
 };
 
+Equipo** simularEtapaMataMata(Equipo** participantes, short numPartidos, string nombreEtapa, Equipo* listaTotal, short totalE);
+
 #endif // PARTIDO_H
