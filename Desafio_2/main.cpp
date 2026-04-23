@@ -275,7 +275,7 @@ int main()
 
     cout << endl;
 
-    //definir cuales pasan a la siguiente ronda
+   
 
     for (short c = 0; c < 12; c++) delete[] matrixPartidos[c];
     delete[] matrixPartidos;
@@ -321,14 +321,14 @@ int main()
     Equipo** segundos = new Equipo*[12];
 
     for (short i = 0; i < 12; i++) {
-        // Verificamos que no nos salgamos del índice 31
+        
         if ((i * 2 + 1) < 32) {
             cabezas[i] = clasificados32[i * 2];
             segundos[i] = clasificados32[i * 2 + 1];
         }
     }
 
-    // 2. Ordenar segundos (Solo si no son nulos)
+   
     for (short i = 0; i < 11; i++) {
         for (short j = 0; j < 11 - i; j++) {
             if (segundos[j] != nullptr && segundos[j+1] != nullptr) { // ESCUDO
@@ -369,14 +369,157 @@ int main()
     cout << "==========================================================" << endl;
 
 
+        Equipo** lista32 = new Equipo*[32];
+    short idx = 0;
+
+   
+    for (short i = 0; i < 8; i++) {
+        lista32[idx++] = cabezas[i];
+        lista32[idx++] = terceros[i];
+    }
+    for (short i = 8; i < 12; i++) {
+        lista32[idx++] = cabezas[i];
+        lista32[idx++] = segundos[i];
+    }
+    for (short i = 0; i < 4; i++) {
+        lista32[idx++] = segundos[i];
+        lista32[idx++] = segundos[7-i];
+    }
+
+
+    Equipo** ganadores16 = simularEtapaMataMata(lista32, 16, "Dieciseisavos", listaEquipos, numeroEquipos);
+    Equipo** ganadores8  = simularEtapaMataMata(ganadores16, 8, "Octavos de Final", listaEquipos, numeroEquipos);
+    Equipo** ganadores4  = simularEtapaMataMata(ganadores8, 4, "Cuartos de Final", listaEquipos, numeroEquipos);
+
+
+    Equipo** finalistas  = simularEtapaMataMata(ganadores4, 2, "Semifinales", listaEquipos, numeroEquipos);
+
+
+    Equipo** perdedoresSemis = new Equipo*[2];
+    perdedoresSemis[0] = (finalistas[0] == ganadores4[0]) ? ganadores4[1] : ganadores4[0];
+    perdedoresSemis[1] = (finalistas[1] == ganadores4[2]) ? ganadores4[3] : ganadores4[2];
+
+   
+    Equipo** tercerLugarArreglo = simularEtapaMataMata(perdedoresSemis, 1, "Tercer Puesto", listaEquipos, numeroEquipos);
+
+    
+    Equipo** podio = simularEtapaMataMata(finalistas, 1, "GRAN FINAL", listaEquipos, numeroEquipos);
+
+
+    cout << "\n\n**********************************************************" << endl;
+    cout << "   ¡EL NUEVO CAMPEON MUNDIAL ES: " << podio[0]->getPais() << "!" << endl;
+    cout << "**********************************************************" << endl;
+
+    podio[0]->setFase("CAMPEON");
+
+
+  
+
+    cout << "\n--- ESTADISTICAS FINALES DEL TORNEO ---" << endl;
+
+
+    cout << "1. Ranking de Honor:" << endl;
+    cout << "   1ro: " << podio[0]->getPais() << endl;
+    cout << "   2do: " << (podio[0] == finalistas[0] ? finalistas[1]->getPais() : finalistas[0]->getPais()) << endl;
+    cout << "   3ro: " << tercerLugarArreglo[0]->getPais() << endl;
+    cout << "   4to: " << (tercerLugarArreglo[0] == perdedoresSemis[0] ? perdedoresSemis[1]->getPais() : perdedoresSemis[0]->getPais()) << endl;
+
+
+    cout << "2. Goleador del Campeon: Dorsal " << podio[0]->obtenerGoleador() << " de " << podio[0]->getPais() << endl;
+
+
+    cout << "3. Top 3 Goleadores del Torneo:" << endl;
+
+
+    Equipo* subcampeon = (podio[0] == finalistas[0] ? finalistas[1] : finalistas[0]);
+
+    cout << "   1ro: Dorsal " << podio[0]->obtenerGoleador() << " (" << podio[0]->getPais() << ")" << endl;
+    cout << "   2do: Dorsal " << subcampeon->obtenerGoleador() << " (" << subcampeon->getPais() << ")" << endl;
+    cout << "   3ro: Dorsal " << tercerLugarArreglo[0]->obtenerGoleador() << " (" << tercerLugarArreglo[0]->getPais() << ")" << endl;
+
+    // 4. Equipo con más goles históricos
+    Equipo* masGoles = &listaEquipos[0];
+    for(int i = 1; i < numeroEquipos; i++) {
+        if(listaEquipos[i].getGolesAFavor() > masGoles->getGolesAFavor()) {
+            masGoles = &listaEquipos[i];
+        }
+    }
+    cout << "4. Equipo con mas goles totales: " << masGoles->getPais() << " (" << masGoles->getGolesAFavor() << " goles)" << endl;
+
+    cout << "4. Confederacion dominante por etapa:" << endl;
+
+    string nombresConf[] = {"UEFA", "CONMEBOL", "CONCACAF", "AFC", "CAF", "OFC"};
+
+  
+    int conteosR16[6] = {0, 0, 0, 0, 0, 0};
+    for(int i = 0; i < 32; i++) {
+        string c = lista32[i]->getConfederacion();
+        for(int k=0; k<6; k++) if(c == nombresConf[k]) conteosR16[k]++;
+    }
+    int maxR16 = 0;
+    for(int i = 1; i < 6; i++) if(conteosR16[i] > conteosR16[maxR16]) maxR16 = i;
+    cout << "   En Dieciseisavos (R16): " << nombresConf[maxR16] << endl;
+
+ 
+    int conteosR8[6] = {0, 0, 0, 0, 0, 0};
+    for(int i = 0; i < 16; i++) {
+        string c = ganadores16[i]->getConfederacion();
+        for(int k=0; k<6; k++) if(c == nombresConf[k]) conteosR8[k]++;
+    }
+    int maxR8 = 0;
+    for(int i = 1; i < 6; i++) if(conteosR8[i] > conteosR8[maxR8]) maxR8 = i;
+    cout << "   En Octavos (R8):        " << nombresConf[maxR8] << endl;
+
+    
+    int conteosR4[6] = {0, 0, 0, 0, 0, 0};
+    for(int i = 0; i < 8; i++) {
+        string c = ganadores8[i]->getConfederacion();
+        for(int k=0; k<6; k++) if(c == nombresConf[k]) conteosR4[k]++;
+    }
+    int maxR4 = 0;
+    for(int i = 1; i < 6; i++) if(conteosR4[i] > conteosR4[maxR4]) maxR4 = i;
+    cout << "   En Cuartos (R4):        " << nombresConf[maxR4] << endl;
+
+    
+    int conteosR2[6] = {0, 0, 0, 0, 0, 0};
+    for(int i = 0; i < 4; i++) {
+        string c = ganadores4[i]->getConfederacion();
+        for(int k=0; k<6; k++) if(c == nombresConf[k]) conteosR2[k]++;
+    }
+    int maxR2 = 0;
+    for(int i = 1; i < 6; i++) if(conteosR2[i] > conteosR2[maxR2]) maxR2 = i;
+    cout << "   En Semifinales (R2):    " << nombresConf[maxR2] << endl;
+
+    gestorArchivo->guardarEquipos(listaEquipos, "ESTE_ES_EL_NUEVO.csv");
+
+
+
+
+
+    delete[] perdedoresSemis;
+    delete[] tercerLugarArreglo;
+    delete[] ganadores16;
+    delete[] ganadores8;
+    delete[] ganadores4;
+    delete[] finalistas;
+    delete[] podio;
+    delete[] lista32;
+    delete[] terceros;
+    delete[] clasificados32;
+
+    delete gestorArchivo;
+
+    delete[] listaEquipos;
+    delete[] listaGrupos;
+
+
+    cout << "\n--- PROGRAMA FINALIZADO CON EXITO ---" << endl;
+    return 0;
+}
+
+
 
     
     
     
-    delete[] terceros;
-    delete[] clasificados32;
-    delete gestorArchivo;
-    delete[] listaEquipos;
-    delete[] listaGrupos;
-    return 0;
-}
+
