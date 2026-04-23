@@ -10,9 +10,9 @@ using namespace std;
 int main()
 {
 
-    cout << " ============================ " << endl;
-    cout << "          UdeAWorldCup                                 "  << endl;
-    cout << " ============================" << endl;
+    cout << " ====================================================================================" << endl;
+    cout << "                                  UdeAWorldCup                                 "  << endl;
+    cout << " ====================================================================================" << endl;
 
     cout << endl;
 
@@ -72,9 +72,15 @@ int main()
 
     //generar los 12 grupos con 4 equipos de diferente bombos (clasificatorias)
 
-    cout << "---------------------------------------------------------------------------------------------------------------" << endl;
-    cout << "|                                  CONFORMACION DE GRUPOS                      |" << endl;
-    cout << "---------------------------------------------------------------------------------------------------------------" << endl;
+    cout << "------------------------------------------------------------------------------------------------------------------------" << endl;
+    cout << "|                                                   CONFORMACION DE GRUPOS                                             |" << endl;
+    cout << "------------------------------------------------------------------------------------------------------------------------" << endl;
+    cout << "| " << left  << setw(7) << "Grupo"
+         << " | " << left << setw(23) << "Equipo 1"
+         << " | " << left << setw(23) << "Equipo 2"
+         << " | " << left << setw(23) << "Equipo 3"
+         << " | " << left << setw(23) << "Equipo 4                     |" << endl;
+     cout << "------------------------------------------------------------------------------------------------------------------------" << endl;
 
 
     for (short  i = 0; i < numeroGrupos; i++){
@@ -82,7 +88,7 @@ int main()
         listaGrupos[i].selecEquipos(bombos, listaEquipos, numeroEquipos);
 
 
-        cout <<  "|   "  <<  listaGrupos[i].getId()     << "   => ";
+        cout <<  "| "  << left << setw(7) <<  listaGrupos[i].getId();
 
         for (short c = 0; c < 4; c++){
             string nombreEquipo = "";
@@ -96,12 +102,14 @@ int main()
                 }
             }
 
-            cout << " " << nombreEquipo << "  (" << nombreConfere  << "),  ";
+            const string texto = nombreEquipo + " (" + nombreConfere + ")";
+
+            cout << " |" << left << setw(24) << texto;
         }
-        cout << endl;
+        cout <<  endl;
     }
 
-     cout << "---------------------------------------------------------------------------------------------------------------" << endl;
+     cout << "------------------------------------------------------------------------------------------------------------------------" << endl;
 
     // ------------------------------- III --------------------------//
     //  --------------------------a) -------------------------------//
@@ -174,6 +182,19 @@ int main()
         listaGrupos[i].ordenarPorPuntos(listaEquipos, numeroEquipos);}
 
     //impresion de los partidos de la eliminatoria de grupos
+
+    cout << endl;
+    cout << "---------------------------------------------------------------------------------------" << endl;
+    cout << "|                                 PARTIDOS ELIMINATORIAS                              |" << endl;
+    cout << "---------------------------------------------------------------------------------------" << endl;
+    cout << "| " << left  << setw(10) << "Fecha"
+         << " | " << left << setw(19) << "Equipo 1"
+         << " | " << left << setw(0) << "Goleador 1"
+         << " | " << left << setw(22) << "Equipo 2"
+         << " | " << left << setw(0) << "Goleador 2 |" << endl;
+    cout << "---------------------------------------------------------------------------------------" << endl;
+
+
     for (short i = 0; i < 12; i++){
         for (short c = 0; c < 6; c++){
             string pais1 = "";
@@ -192,18 +213,31 @@ int main()
                 }
             }
 
-            cout <<  matrixPartidos[i][c].getFecha() << " => " << pais1 << " ("<< numeroCamisa1 <<") "  <<  "vs"  << "  " << pais2 << " (" << numeroCamisa2 << ")" << endl;
+            cout << "|" <<  left << setw(11) <<  matrixPartidos[i][c].getFecha()
+                 << " |" << left << setw(20) << pais1
+                 << " |" << left << setw(11) << numeroCamisa1
+                 << " |"  << left << setw(23) << pais2
+                 << " |"  << left << setw(5) << numeroCamisa2 << "       |" << endl;
+
+            //cout <<  matrixPartidos[i][c].getFecha() << " => " << pais1 << " ("<< numeroCamisa1 <<") "  <<  "vs"  << "  " << pais2 << " (" << numeroCamisa2 << ")" << endl;
         }
-        cout << endl;
     }
+
+    cout << "---------------------------------------------------------------------------------------" << endl;
 
 
     //------------------ b) ------------------//
     //      avance a dieciseisavos          //
+    cout << endl;
+    cout << "---------------------------------------------------------------------" << endl;
+    cout << "|                    RESULTADOS ELIMINATORIAS                       |" << endl;
+    cout << "---------------------------------------------------------------------";
+
     for (short c = 0; c < numeroGrupos; c++) {
         const string grupo = "Grupo " + string(1,listaGrupos[c].getId());
-        cout << " ---------------------------------------------------------------------" << endl;
+       // cout << "---------------------------------------------------------------------" << endl;
 
+        cout << endl;
         cout << "| " << left  << setw(23) << grupo
              << " | " << right << setw(4) << "PJ"
              << " | " << right << setw(4) << "PG"
@@ -211,7 +245,7 @@ int main()
              << " | " << right << setw(4) << "PP"
              << " | " << right << setw(4) << "DG"
              << " | " << right << setw(4) << "PTS" << " |" << endl;
-        cout << "----------------------------------------------------------------------" << endl;
+        cout << "---------------------------------------------------------------------" << endl;
 
         for (short k = 0; k < 4; k++) {
             const short rankingfifa = listaGrupos[c].getEquiposRF()[k];
@@ -234,11 +268,12 @@ int main()
             }
         }
 
-        cout << "----------------------------------------------------------------------" << endl;
-        cout << endl;
+        cout << "---------------------------------------------------------------------";
+        //cout << endl;
     }
     
 
+    cout << endl;
 
     //definir cuales pasan a la siguiente ronda
 
