@@ -184,3 +184,64 @@ void Partido::setDia(short newDia)
 {
     dia = newDia;
 }
+Equipo** simularEtapaMataMata(Equipo** participantes, short numPartidos, string nombreEtapa, Equipo* listaTotal, short totalE) {
+    Equipo** ganadores = new Equipo*[numPartidos];
+
+    // --- ESTO ES LO QUE FALTA: EL TÍTULO DE LA ETAPA ---
+    cout << "\n==========================================================" << endl;
+    cout << "          SIMULANDO: " << nombreEtapa << endl;
+    cout << "==========================================================" << endl;
+
+    for (short i = 0; i < numPartidos; i++) {
+        Equipo* e1 = participantes[i * 2];
+        Equipo* e2 = participantes[i * 2 + 1];
+
+        short* indicesE1 = new short[11];
+        short* indicesE2 = new short[11];
+
+        e1->seleccionarJugadores(indicesE1);
+        e2->seleccionarJugadores(indicesE2);
+
+        Partido p;
+        p.setRankingFifaequip1(e1->getRankinFifa());
+        p.setRankingFifaequip2(e2->getRankinFifa());
+
+        short golesAntesE1 = e1->getGolesAFavor();
+        short golesAntesE2 = e2->getGolesAFavor();
+
+        p.simularOcurrencia(listaTotal, totalE, "EL");
+
+        short golesHoyE1 = e1->getGolesAFavor() - golesAntesE1;
+        short golesHoyE2 = e2->getGolesAFavor() - golesAntesE2;
+
+        e1->metricasJugadores(indicesE1, (float)golesHoyE1, nombreEtapa);
+        e2->metricasJugadores(indicesE2, (float)golesHoyE2, nombreEtapa);
+
+        // Lógica de Desempate
+        if (golesHoyE1 == golesHoyE2) {
+            if (e1->getRankinFifa() < e2->getRankinFifa()) {
+                golesHoyE1++;
+                e1->setGolesAFavor(e1->getGolesAFavor() + 1);
+                ganadores[i] = e1;
+                e2->setFase(nombreEtapa);
+            } else {
+                golesHoyE2++;
+                e2->setGolesAFavor(e2->getGolesAFavor() + 1);
+                ganadores[i] = e2;
+                e1->setFase(nombreEtapa);
+            }
+            cout << "[RF] ";
+        } else {
+            if (golesHoyE1 > golesHoyE2) { ganadores[i] = e1; e2->setFase(nombreEtapa); }
+            else { ganadores[i] = e2; e1->setFase(nombreEtapa); }
+        }
+
+        cout << e1->getPais() << " (" << golesHoyE1 << ") vs ("
+             << golesHoyE2 << ") " << e2->getPais()
+             << " | Goleador: " << e1->obtenerGoleador() << endl;
+
+        delete[] indicesE1;
+        delete[] indicesE2;
+    }
+    return ganadores;
+}
