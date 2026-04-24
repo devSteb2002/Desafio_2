@@ -9,7 +9,7 @@ class Partido{
     Partido();
 
         void  generarFecha(const short &dia);
-        void  simularOcurrencia(Equipo *& listaEquipos, const short &numEquipos, const string& etapa);
+    void  simularOcurrencia(Equipo *& listaEquipos, const short &numEquipos, const string& etapa, long &iteraciones, long &totalMemoria);
 
         string getFecha() const;
         void setFecha(const string &newFecha);
@@ -29,7 +29,6 @@ class Partido{
         void setRankingFifaequip2(short newRankingFifaequip2);
         bool getFinalizado() const;
         void setFinalizado(bool newFinalizado);
-
         short getDia() const;
         void setDia(short newDia);
 
@@ -46,6 +45,6 @@ class Partido{
         short     dia = 0;
 };
 
-Equipo** simularEtapaMataMata(Equipo** participantes, short numPartidos, string nombreEtapa, Equipo* listaTotal, short totalE);
+Equipo** simularEtapaMataMata(Equipo** participantes, short numPartidos, string nombreEtapa, Equipo* listaTotal, short totalE, long &iteraciones, long& totalMemoria);
 
 #endif // PARTIDO_H

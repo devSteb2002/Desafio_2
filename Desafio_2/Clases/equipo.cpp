@@ -45,7 +45,7 @@ void Equipo::seleccionarJugadores(short *&listaJugadores){
 
 }
 
-void Equipo::metricasJugadores(short *&listaJugadores, const float &golesEsperados, const string &etapa){
+void Equipo::metricasJugadores(short *&listaJugadores, const float &golesEsperados, const string &etapa, long &iteraciones, long &totalMemoria){
     random_device rd;
     mt19937 gen(rd());
     uniform_int_distribution<> dis(1, 10000);
@@ -58,12 +58,16 @@ void Equipo::metricasJugadores(short *&listaJugadores, const float &golesEsperad
     int intentosMaximos = 40;
     int intentos = 0;
 
+    totalMemoria += sizeof(float) + sizeof(short) *6 + sizeof(int) * 2;
+
     while (golesContabilizados < golesEsperados && intentos < intentosMaximos){
         intentos++;
+        iteraciones++;
 
         if (golesContabilizados >= golesEsperados) break;
 
         for (short c = 0; c < 11; c++){
+            iteraciones++;
             short random = dis(gen);
 
             //goles (4%)
@@ -112,6 +116,7 @@ void Equipo::metricasJugadores(short *&listaJugadores, const float &golesEsperad
         }
     }
 
+    iteraciones += 37;
 }
 
 

@@ -10,6 +10,9 @@ using namespace std;
 int main()
 {
 
+    long  iteraciones = 0;
+    long totalMemoria = 0;
+
     cout << " ====================================================================================" << endl;
     cout << "                                  UdeAWorldCup                                 "  << endl;
     cout << " ====================================================================================" << endl;
@@ -23,43 +26,63 @@ int main()
 
     // ----------------------------I--------------------------------- //
     const string archivoEquipos = "selecciones_clasificadas_mundial.csv";
-    GestorArchivo* gestorArchivo = new GestorArchivo(archivoEquipos);
+    GestorArchivo* gestorArchivo = new GestorArchivo(archivoEquipos, iteraciones, totalMemoria);
 
     const short  numeroEquipos = gestorArchivo->getNumeroDeEquipos();
+
+    totalMemoria += sizeof(gestorArchivo) + sizeof(archivoEquipos) + sizeof(numeroEquipos);
+
     Equipo* listaEquipos = new Equipo[numeroEquipos];
     Grupo*  listaGrupos  = new Grupo[numeroGrupos];
 
-    gestorArchivo->cargarEquipos(listaEquipos, archivoEquipos); //llenar datos de los equipos en la lista de equipos
+    totalMemoria += sizeof(listaEquipos) * numeroEquipos + sizeof(listaGrupos) * numeroGrupos;
+
+    gestorArchivo->cargarEquipos(listaEquipos, archivoEquipos, iteraciones, totalMemoria); //llenar datos de los equipos en la lista de equipos
 
     for (short i = 0; i < numeroEquipos; i++){
+        iteraciones++;
+
         Jugador *jugadores = new Jugador[26]; //inicializar arreglo de 26 jugadores y añadirlo al equipo
         listaEquipos[i].setJuagores(jugadores); // añadir los 26 jugadores a cada equipo
 
         for (short  f = 0; f < 26; f++){ // definir valores iniciales para cada jugador
+            iteraciones++;
+
             listaEquipos[i].getJuagores()[f].setNombre("nombre" + to_string(f + 1));
             listaEquipos[i].getJuagores()[f].setApellido("apellido" + to_string(f + 1));
             listaEquipos[i].getJuagores()[f].setNumeroCamisa(f + 1);
         }
     }
 
+    totalMemoria += numeroEquipos * 26 * sizeof(Jugador);
+
+
       // --------------------------- II -----------------------//
     short   bombos[4][12];
     short   salto = 0;
     short   indexFila = 0;
 
+    totalMemoria += 48 * 2 + 2 + 2;
+
     for (short i = 0; i < numeroEquipos - 1; i++) { // metodo de burbuja para ordenar por rankingFifa
+        iteraciones++;
+
         for (short j = 0; j < numeroEquipos - i - 1; j++) {
+            iteraciones++;
 
             if (listaEquipos[j].getRankinFifa() > listaEquipos[j + 1].getRankinFifa()) {
 
                 Equipo temp = listaEquipos[j];
                 listaEquipos[j] = listaEquipos[j + 1];
                 listaEquipos[j + 1] = temp;
+                totalMemoria += sizeof(temp);
             }
         }
     }
 
     for (short i = 0; i < numeroEquipos; i++){     //generar bombos
+        iteraciones++;
+
         bombos[indexFila][salto] = listaEquipos[i].getRankinFifa();
 
         if (salto == 11){
@@ -84,17 +107,22 @@ int main()
 
 
     for (short  i = 0; i < numeroGrupos; i++){
+         iteraciones++;
+
         listaGrupos[i].setId(letras[i]);
         listaGrupos[i].selecEquipos(bombos, listaEquipos, numeroEquipos);
-
 
         cout <<  "| "  << left << setw(7) <<  listaGrupos[i].getId();
 
         for (short c = 0; c < 4; c++){
+            iteraciones++;
+
             string nombreEquipo = "";
             string nombreConfere = "";
 
             for (short f = 0; f < numeroEquipos; f++){
+                iteraciones++;
+
                 if (listaEquipos[f].getRankinFifa() == listaGrupos[i].getEquiposRF()[c]){
                     nombreEquipo = listaEquipos[f].getPais();
                     nombreConfere = listaEquipos[f].getConfederacion();
@@ -111,6 +139,13 @@ int main()
 
      cout << "------------------------------------------------------------------------------------------------------------------------" << endl;
 
+     totalMemoria += 24 + 24 + 24;
+     totalMemoria = totalMemoria / 1024;
+
+     cout << "Numero de iteraciones: " << iteraciones << endl;
+     cout << "Total memoria usada: " << totalMemoria  << " KB" << endl;
+
+
     // ------------------------------- III --------------------------//
     //  --------------------------a) -------------------------------//
     // 6 partidos por grupos
@@ -120,6 +155,7 @@ int main()
     Partido* listaPartidos = new Partido[12*partidosPorGrupo];
 
     for (short  c = 0; c < numeroGrupos; c++){
+        iteraciones++;
         const short  equipo1 = listaGrupos[c].getEquiposRF()[0];
         const short  equipo2 = listaGrupos[c].getEquiposRF()[1];
         const short  equipo3 = listaGrupos[c].getEquiposRF()[2];
@@ -150,11 +186,17 @@ int main()
         indexPartidos++;
     }
 
+    totalMemoria += sizeof(short)*5 + sizeof(listaPartidos) * 12 * partidosPorGrupo + 8;
+
     Partido **matrixPartidos = new Partido*[12];
 
-    for (short i = 0; i < 12; i++) matrixPartidos[i] = new Partido[6];
+    for (short i = 0; i < 12; i++) {
+        iteraciones++;
+        matrixPartidos[i] = new Partido[6];
+    }
 
     for (short i = 0; i < 72; i++) { // llenar la matriz por rondas
+        iteraciones++;
         short fila = i / 6;
         short col  = i % 6;
 
@@ -163,23 +205,31 @@ int main()
 
     delete[] listaPartidos;
 
+    totalMemoria += sizeof(matrixPartidos) * 72 -  sizeof(listaPartidos) * 12 * partidosPorGrupo;
+
     // generacion de fechas para cada partido segun las reglas
     //ocurrencia de goles (definir que equipo gano y actualizar estadisticas)
     short dias = 1;
     for (short col = 0; col < 6; col++){
+        iteraciones++;
         for (short row = 0; row < 12; row++){
+            iteraciones++;
             matrixPartidos[row][col].setDia(dias);
             matrixPartidos[row][col].generarFecha(dias);
 
             if (row == 3 || row == 7 || row == 11) dias++;
 
             //simulacion ocurrencia de goles
-            matrixPartidos[row][col].simularOcurrencia(listaEquipos, numeroEquipos, "EL");
+            matrixPartidos[row][col].simularOcurrencia(listaEquipos, numeroEquipos, "EL", iteraciones, totalMemoria);
         }
     }
 
+    totalMemoria += sizeof(short) + sizeof(float) * 4;
+
     for (short i = 0; i < numeroGrupos; i++) {
-        listaGrupos[i].ordenarPorPuntos(listaEquipos, numeroEquipos);}
+        iteraciones++;
+        listaGrupos[i].ordenarPorPuntos(listaEquipos, numeroEquipos);
+    }
 
     //impresion de los partidos de la eliminatoria de grupos
 
@@ -196,13 +246,16 @@ int main()
 
 
     for (short i = 0; i < 12; i++){
+        iteraciones++;
         for (short c = 0; c < 6; c++){
+            iteraciones++;
             string pais1 = "";
             string pais2 = "";
             short numeroCamisa1 = 0;
             short numeroCamisa2 = 0;
 
             for (short f = 0; f < numeroEquipos; f++){
+                iteraciones++;
                 if (listaEquipos[f].getRankinFifa() == matrixPartidos[i][c].getRankingFifaequip1()) {
                     pais1 = listaEquipos[f].getPais();
                     numeroCamisa1 = listaEquipos[f].obtenerGoleador();
@@ -222,8 +275,11 @@ int main()
             //cout <<  matrixPartidos[i][c].getFecha() << " => " << pais1 << " ("<< numeroCamisa1 <<") "  <<  "vs"  << "  " << pais2 << " (" << numeroCamisa2 << ")" << endl;
         }
     }
-
     cout << "---------------------------------------------------------------------------------------" << endl;
+
+    totalMemoria += sizeof(short)*2 + sizeof(string)*2;
+    cout << "Numero de iteraciones: " << iteraciones << endl;
+    cout << "Total memoria usada: " << totalMemoria  << " KB" << endl;
 
 
     //------------------ b) ------------------//
@@ -234,6 +290,7 @@ int main()
     cout << "---------------------------------------------------------------------";
 
     for (short c = 0; c < numeroGrupos; c++) {
+        iteraciones++;
         const string grupo = "Grupo " + string(1,listaGrupos[c].getId());
        // cout << "---------------------------------------------------------------------" << endl;
 
@@ -248,9 +305,11 @@ int main()
         cout << "---------------------------------------------------------------------" << endl;
 
         for (short k = 0; k < 4; k++) {
+            iteraciones++;
             const short rankingfifa = listaGrupos[c].getEquiposRF()[k];
 
             for (short i = 0; i < numeroEquipos; i++) {
+                iteraciones++;
                 if (listaEquipos[i].getRankinFifa() == rankingfifa) {
                     const short DG = listaEquipos[i].getGolesAFavor() - listaEquipos[i].getGolesEnContra();
                     const short PT = listaEquipos[i].getPartidosGanados() * 3 + listaEquipos[i].getPartidosEmpatados();
@@ -271,41 +330,53 @@ int main()
         cout << "---------------------------------------------------------------------";
         //cout << endl;
     }
-    
-
     cout << endl;
 
-   
+    totalMemoria += sizeof(string) + sizeof(short)*3;
+    cout << "Numero de iteraciones: " << iteraciones << endl;
+    cout << "Total memoria usada: " << totalMemoria  << " KB" << endl;
+    cout << endl;
 
-    for (short c = 0; c < 12; c++) delete[] matrixPartidos[c];
+   totalMemoria -= sizeof(matrixPartidos) * 72;
+
+    for (short c = 0; c < 12; c++){
+        iteraciones++;
+        delete[] matrixPartidos[c];
+    }
     delete[] matrixPartidos;
 
     Equipo** clasificados32 = new Equipo*[32];
     short contC = 0;
 
     for (short i = 0; i < 12; i++) {
+        iteraciones++;
         short rf1 = listaGrupos[i].getEquiposRF()[0];
         short rf2 = listaGrupos[i].getEquiposRF()[1];
         for (short e = 0; e < numeroEquipos; e++) {
+            iteraciones++;
             if (contC < 32) {
-
                 if (listaEquipos[e].getRankinFifa() == rf1) clasificados32[contC++] = &listaEquipos[e];
                 if (contC < 32 && listaEquipos[e].getRankinFifa() == rf2) clasificados32[contC++] = &listaEquipos[e];
             }
         }
     }
 
+    totalMemoria += sizeof(clasificados32) * 32;
 
     Equipo** terceros = new Equipo*[12];
     for (short i = 0; i < 12; i++) {
+        iteraciones++;
         short rf3 = listaGrupos[i].getEquiposRF()[2];
         for (short e = 0; e < numeroEquipos; e++) {
+            iteraciones++;
             if (listaEquipos[e].getRankinFifa() == rf3) terceros[i] = &listaEquipos[e];
         }
     }
 
     for (short i = 0; i < 11; i++) {
+        iteraciones++;
         for (short j = 0; j < 11 - i; j++) {
+            iteraciones++;
             if (j + 1 < 12) {
                 if (terceros[j]->getPuntos() < terceros[j+1]->getPuntos()) {
                     Equipo* temp = terceros[j]; // temp ahora es puntero
@@ -316,21 +387,25 @@ int main()
         }
     }
 
+    totalMemoria += sizeof(terceros)*12 + sizeof(short);
 
     Equipo** cabezas = new Equipo*[12];
     Equipo** segundos = new Equipo*[12];
 
+    totalMemoria += sizeof(cabezas)*12 + sizeof(segundos)*12;
+
     for (short i = 0; i < 12; i++) {
-        
+        iteraciones++;
         if ((i * 2 + 1) < 32) {
             cabezas[i] = clasificados32[i * 2];
             segundos[i] = clasificados32[i * 2 + 1];
         }
     }
 
-   
     for (short i = 0; i < 11; i++) {
+        iteraciones++;
         for (short j = 0; j < 11 - i; j++) {
+            iteraciones++;
             if (segundos[j] != nullptr && segundos[j+1] != nullptr) { // ESCUDO
                 if (segundos[j]->getPuntos() < segundos[j+1]->getPuntos()) {
                     Equipo* temp = segundos[j];
@@ -342,68 +417,91 @@ int main()
     }
 
 
-    cout << "\n==========================================================" << endl;
-    cout << "          CRUCES DE DIECISEISAVOS DE FINAL                " << endl;
-    cout << "==========================================================" << endl;
+    cout << "---------------------------------------------------------------------" << endl;
+    cout << "|            CRUCES DE DIECISEISAVOS DE FINAL                       |" << endl;
+    cout << "---------------------------------------------------------------------" << endl;
+    cout << "|" <<  left << setw(4) <<" #P  "
+         << "|" << left << setw(20) << " Pais 1"
+         << "|" << left << setw(4) << "vs"
+         << "|" << left << setw(23) << " Pais 2"
+         << "|" << left << setw(10) << "Resumen"
+         << right << setw(1) << " |" << endl;
+
+    cout << "---------------------------------------------------------------------" << endl;
 
     short numP = 1;
 
 
     for (short i = 0; i < 8; i++) {
-        cout << "P" << setw(2) << numP++ << ": " << left << setw(20)
-        << cabezas[i]->getPais() << " vs " << terceros[i]->getPais() << " (C vs T)" << endl;
+        cout << "|" << left << setw(5) << numP++
+             << "|" << left << setw(20) << cabezas[i]->getPais()
+             << "|" << left << setw(4) << " vs"
+             << "|" << left << setw(23) << terceros[i]->getPais()
+             << "|" << left << setw(2) << " (C vs T)"
+             << right << setw(3) << "|" << endl;
     }
 
 
     for (short i = 8; i < 12; i++) {
-        cout << "P" << setw(2) << numP++ << ": " << left << setw(20)
-        << cabezas[i]->getPais() << " vs " << segundos[i]->getPais() << " (C vs S)" << endl;
+        cout << "|" << left << setw(5) << numP++
+             << "|" << left << setw(20) << cabezas[i]->getPais()
+             << "|" << left << setw(4) << " vs"
+             << "|" << left << setw(23) << segundos[i]->getPais()
+             << "|" << left << setw(2) << " (C vs S)"
+             << right << setw(3) << "|" << endl;
     }
 
 
     for (short i = 0; i < 4; i++) {
-        cout << "P" << setw(2) << numP++ << ": " << left << setw(20)
-        << segundos[i]->getPais() << " vs " << segundos[7-i]->getPais() << " (S vs S)" << endl;
+        cout << "|" << left << setw(5) << numP++
+             << "|" << left << setw(20) << segundos[i]->getPais()
+             << "|" << left << setw(4) << " vs"
+             << "|" << left << setw(23) << segundos[7-i]->getPais()
+             << "|" << left << setw(2) << " (S vs S)"
+             << right << setw(3) << "|" << endl;
     }
 
-    cout << "==========================================================" << endl;
+     cout << "---------------------------------------------------------------------" << endl;
 
-
-        Equipo** lista32 = new Equipo*[32];
+    Equipo** lista32 = new Equipo*[32];
     short idx = 0;
-
    
     for (short i = 0; i < 8; i++) {
+        iteraciones++;
         lista32[idx++] = cabezas[i];
         lista32[idx++] = terceros[i];
     }
     for (short i = 8; i < 12; i++) {
+        iteraciones++;
         lista32[idx++] = cabezas[i];
         lista32[idx++] = segundos[i];
     }
     for (short i = 0; i < 4; i++) {
+        iteraciones++;
         lista32[idx++] = segundos[i];
         lista32[idx++] = segundos[7-i];
     }
 
+    totalMemoria += sizeof(numP) + sizeof(lista32)*32 + sizeof(idx);
 
-    Equipo** ganadores16 = simularEtapaMataMata(lista32, 16, "Dieciseisavos", listaEquipos, numeroEquipos);
-    Equipo** ganadores8  = simularEtapaMataMata(ganadores16, 8, "Octavos de Final", listaEquipos, numeroEquipos);
-    Equipo** ganadores4  = simularEtapaMataMata(ganadores8, 4, "Cuartos de Final", listaEquipos, numeroEquipos);
+    Equipo** ganadores16 = simularEtapaMataMata(lista32, 16, "Dieciseisavos", listaEquipos, numeroEquipos, iteraciones, totalMemoria);
+    Equipo** ganadores8  = simularEtapaMataMata(ganadores16, 8, "Octavos de Final", listaEquipos, numeroEquipos, iteraciones, totalMemoria);
+    Equipo** ganadores4  = simularEtapaMataMata(ganadores8, 4, "Cuartos de Final", listaEquipos, numeroEquipos, iteraciones, totalMemoria);
+    Equipo** finalistas  = simularEtapaMataMata(ganadores4, 2, "Semifinales", listaEquipos, numeroEquipos, iteraciones, totalMemoria);
 
-
-    Equipo** finalistas  = simularEtapaMataMata(ganadores4, 2, "Semifinales", listaEquipos, numeroEquipos);
-
+    totalMemoria += sizeof(ganadores16)*16 + sizeof(ganadores8) *8 + sizeof(ganadores4)*4 + sizeof(finalistas)*2;
 
     Equipo** perdedoresSemis = new Equipo*[2];
     perdedoresSemis[0] = (finalistas[0] == ganadores4[0]) ? ganadores4[1] : ganadores4[0];
     perdedoresSemis[1] = (finalistas[1] == ganadores4[2]) ? ganadores4[3] : ganadores4[2];
 
    
-    Equipo** tercerLugarArreglo = simularEtapaMataMata(perdedoresSemis, 1, "Tercer Puesto", listaEquipos, numeroEquipos);
+    Equipo** tercerLugarArreglo = simularEtapaMataMata(perdedoresSemis, 1, "Tercer Puesto", listaEquipos, numeroEquipos, iteraciones, totalMemoria);
 
     
-    Equipo** podio = simularEtapaMataMata(finalistas, 1, "GRAN FINAL", listaEquipos, numeroEquipos);
+    Equipo** podio = simularEtapaMataMata(finalistas, 1, "GRAN FINAL", listaEquipos, numeroEquipos, iteraciones, totalMemoria);
+
+    totalMemoria += sizeof(perdedoresSemis) * 2 + sizeof(tercerLugarArreglo) + sizeof(podio);
 
 
     cout << "\n\n**********************************************************" << endl;
@@ -412,6 +510,9 @@ int main()
 
     podio[0]->setFase("CAMPEON");
 
+    cout << "Numero de iteraciones: " << iteraciones << endl;
+    cout << "Total memoria usada: " << totalMemoria  << " KB" << endl;
+    cout << endl;
 
   
 

@@ -10,7 +10,6 @@ class Jugador{
 
         void actualizarDatos(const short&  goles, const short& amarillas, const short& rojas, const short& faltas, const string& etapaEnQueJuega);
 
-
         string getNombre() const;
         void setNombre(const string &newNombre);
         string getApellido() const;
@@ -33,7 +32,6 @@ class Jugador{
         void setCaFaltas(short newCaFaltas);
         bool getJuega() const;
         void setJuega(bool newJuega);
-
         string getEtapaEnQueJuega() const;
         void setEtapaEnQueJuega(const string &newEtapaEnQueJuega);
 
