@@ -3,6 +3,7 @@
 
 #include "equipo.h"
 #include <cmath>
+#include <iomanip>
 
 class Partido{
     public:
