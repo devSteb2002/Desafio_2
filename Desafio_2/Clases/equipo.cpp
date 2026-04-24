@@ -3,7 +3,7 @@
 
 Equipo::Equipo() {}
 
-void Equipo::seleccionarJugadores(short *&listaJugadores){
+void Equipo::seleccionarJugadores(short *&listaJugadores, int &iteraciones, int &totalMemoria){
 
     random_device rd;
     mt19937 gen(rd());
@@ -12,11 +12,16 @@ void Equipo::seleccionarJugadores(short *&listaJugadores){
     short random;
     bool completo = false;
 
-    for (short i = 0; i < 11; i++) listaJugadores[i] = 0;
+    for (short i = 0; i < 11; i++){
+        iteraciones++;
+        listaJugadores[i] = 0;
+    }
 
     while (!completo){
+        iteraciones++;
         completo = true;
         for (short c = 0; c < 11; c++){
+            iteraciones++;
             if (listaJugadores[c] == 0) {
                 completo = false;
                 break;
@@ -27,6 +32,7 @@ void Equipo::seleccionarJugadores(short *&listaJugadores){
         bool   yaSeleccionado = false;
 
         for (short i = 0; i < 11; i++){
+            iteraciones++;
             if (listaJugadores[i] == random) {
                 yaSeleccionado = true;
                 break;
@@ -35,6 +41,7 @@ void Equipo::seleccionarJugadores(short *&listaJugadores){
 
         if (!yaSeleccionado){
             for (short c = 0; c < 11; c++){
+                iteraciones++;
                 if (listaJugadores[c] == 0){
                     listaJugadores[c] = random;
                     break;
@@ -43,9 +50,10 @@ void Equipo::seleccionarJugadores(short *&listaJugadores){
         }
     }
 
+    totalMemoria += sizeof(random) +sizeof(completo) + sizeof(bool);
 }
 
-void Equipo::metricasJugadores(short *&listaJugadores, const float &golesEsperados, const string &etapa, long &iteraciones, long &totalMemoria){
+void Equipo::metricasJugadores(short *&listaJugadores, const float &golesEsperados, const string &etapa, int &iteraciones, int &totalMemoria){
     random_device rd;
     mt19937 gen(rd());
     uniform_int_distribution<> dis(1, 10000);
@@ -120,12 +128,13 @@ void Equipo::metricasJugadores(short *&listaJugadores, const float &golesEsperad
 }
 
 
-short Equipo::obtenerGoleador(){
+short Equipo::obtenerGoleador(int &iteraciones, int &totalMemoria){
 
     short numeroCamisa = 1;
     short numeroGoles = 0;
 
     for (short c = 0; c < 26; c++){
+        iteraciones++;
         if (this->juagores[c].getEtapaEnQueJuega() == "EL"){
             if (this->juagores[c].getNumeroGoles() > numeroGoles){
                 numeroGoles = this->juagores[c].getNumeroGoles();
@@ -133,6 +142,8 @@ short Equipo::obtenerGoleador(){
             }
         }
     }
+
+    totalMemoria += sizeof(numeroCamisa) + sizeof(numeroGoles);
 
     return numeroCamisa;
 }

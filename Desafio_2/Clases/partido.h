@@ -8,8 +8,8 @@ class Partido{
     public:
     Partido();
 
-        void  generarFecha(const short &dia);
-    void  simularOcurrencia(Equipo *& listaEquipos, const short &numEquipos, const string& etapa, long &iteraciones, long &totalMemoria);
+        void  generarFecha(const short &dia, int &totalMemoria);
+        void  simularOcurrencia(Equipo *& listaEquipos, const short &numEquipos, const string& etapa, int &iteraciones, int &totalMemoria);
 
         string getFecha() const;
         void setFecha(const string &newFecha);
@@ -31,7 +31,7 @@ class Partido{
         void setFinalizado(bool newFinalizado);
         short getDia() const;
         void setDia(short newDia);
-        static Equipo** simularEtapaMataMata(Equipo** participantes, short numPartidos,std::string nombreEtapa, Equipo* listaTotal, short totalEquipos);
+        static Equipo** simularEtapaMataMata(Equipo** participantes, short numPartidos,std::string nombreEtapa, Equipo* listaTotal, short totalEquipos,  int &iteraciones, int& totalMemoria);
 
     private:
         string    fecha;
@@ -45,7 +45,5 @@ class Partido{
         bool      finalizado = false;
         short     dia = 0;
 };
-
-Equipo** simularEtapaMataMata(Equipo** participantes, short numPartidos, string nombreEtapa, Equipo* listaTotal, short totalE, long &iteraciones, long& totalMemoria);
 
 #endif // PARTIDO_H

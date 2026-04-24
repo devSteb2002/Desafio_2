@@ -1,8 +1,9 @@
 #include "partido.h"
+#include <iomanip>
 
 Partido::Partido(){}
 
-void Partido::generarFecha(const short &dia){
+void Partido::generarFecha(const short &dia, int &totalMemoria){
     const short diaBase = 20; // 20 de junio
     short  mes = 6;  // junio
     string fecha = "";
@@ -19,9 +20,11 @@ void Partido::generarFecha(const short &dia){
         fecha = to_string(newDia) + "/" + to_string(mes) + "/2026";
         this->setFecha(fecha);
     }
+
+    totalMemoria += sizeof(diaBase) + sizeof(mes) + sizeof(fecha) + sizeof(short) * 2;
 }
 
-void Partido::simularOcurrencia(Equipo *& listaEquipos, const short &numEquipos, const string &etapa, long &iteraciones, long &totalMemoria){
+void Partido::simularOcurrencia(Equipo *& listaEquipos, const short &numEquipos, const string &etapa, int &iteraciones, int &totalMemoria){
     const float u = 1.35;
     const float a = 0.6;
     const float B = 0.4;
@@ -60,7 +63,7 @@ void Partido::simularOcurrencia(Equipo *& listaEquipos, const short &numEquipos,
             else listaEquipos[i].setPartidosEmpatados(listaEquipos[i].getPartidosEmpatados() + 1);
 
             listaEquipos[i].setPartidosJugados(listaEquipos[i].getPartidosJugados() + 1);
-            listaEquipos[i].seleccionarJugadores(listaJugadoresA);
+            listaEquipos[i].seleccionarJugadores(listaJugadoresA, iteraciones, totalMemoria);
             listaEquipos[i].metricasJugadores(listaJugadoresA, goleEsperadosEquipo1, etapa, iteraciones, totalMemoria);
         }
 
@@ -74,7 +77,7 @@ void Partido::simularOcurrencia(Equipo *& listaEquipos, const short &numEquipos,
             else listaEquipos[i].setPartidosEmpatados(listaEquipos[i].getPartidosEmpatados() + 1);
 
             listaEquipos[i].setPartidosJugados(listaEquipos[i].getPartidosJugados() + 1);
-            listaEquipos[i].seleccionarJugadores(listaJugadoresB);
+            listaEquipos[i].seleccionarJugadores(listaJugadoresB, iteraciones, totalMemoria);
             listaEquipos[i].metricasJugadores(listaJugadoresB, golesEsperadosEquipo2, etapa, iteraciones, totalMemoria);
         }
     }
@@ -183,12 +186,25 @@ void Partido::setDia(short newDia)
 {
     dia = newDia;
 }
-Equipo** simularEtapaMataMata(Equipo** participantes, short numPartidos, string nombreEtapa, Equipo* listaTotal, short totalE, long &iteraciones, long&totalMemoria) {
+
+Equipo** Partido::simularEtapaMataMata(Equipo** participantes, short numPartidos, string nombreEtapa, Equipo* listaTotal, short totalE,  int &iteraciones, int& totalMemoria) {
     Equipo** ganadores = new Equipo*[numPartidos];
 
-    cout << "\n==========================================================" << endl;
-    cout << "          SIMULANDO: " << nombreEtapa << endl;
-    cout << "==========================================================" << endl;
+    cout << endl;
+    cout << "---------------------------------------------------------------------------------------" << endl;
+    cout << "|                  SIMULANDO: " << left << setw(30) << nombreEtapa;
+     cout << right << setw(27) << "|" << endl;
+    cout << "---------------------------------------------------------------------------------------" << endl;
+     cout << "|" << left << setw(20) << " Pais 1"
+          << "|"<<  left << setw(1)  << " Goles"
+          << "|"<<  left << setw(1)  << " Goleador 1"
+          << "|" << left << setw(4) << " vs"
+          << "|" << left << setw(20) << " Pais 2"
+          << "|"<<  left << setw(1)  << " Goles"
+         << "|"<<  left << setw(1)  << " Goleador 2"
+          << right << setw(1) << " |" << endl;
+
+     cout << "---------------------------------------------------------------------------------------" << endl;
 
     for (short i = 0; i < numPartidos; i++) {
         iteraciones++;
@@ -199,8 +215,8 @@ Equipo** simularEtapaMataMata(Equipo** participantes, short numPartidos, string 
         short* indicesE1 = new short[11];
         short* indicesE2 = new short[11];
 
-        e1->seleccionarJugadores(indicesE1);
-        e2->seleccionarJugadores(indicesE2);
+        e1->seleccionarJugadores(indicesE1, iteraciones, totalMemoria);
+        e2->seleccionarJugadores(indicesE2, iteraciones, totalMemoria);
 
         
         Partido p;
@@ -231,7 +247,7 @@ Equipo** simularEtapaMataMata(Equipo** participantes, short numPartidos, string 
                 ganadores[i] = e2;
                 e1->setFase(nombreEtapa);
             }
-            cout << "[RF] ";
+           // cout << "[RF] ";
         } else {
             if (golesHoyE1 > golesHoyE2) {
                 ganadores[i] = e1;
@@ -242,15 +258,24 @@ Equipo** simularEtapaMataMata(Equipo** participantes, short numPartidos, string 
             }
         }
 
-        
-        cout << left << setw(15) << e1->getPais() << " (" << golesHoyE1 << ") vs ("
-             << golesHoyE2 << ") " << right << setw(15) << e2->getPais()
-             << " | Goleador: " << e1->obtenerGoleador() << endl;
+        cout << "|" << left << setw(20) << e1->getPais()
+             << "|" << left << setw(6) << golesHoyE1
+             << "|" << left << setw(11) << e1->obtenerGoleador(iteraciones, totalMemoria)
+             << "|" << left << setw(4) << " vs "
+             << "|" << left << setw(20) << e2->getPais()
+              << "|" << left << setw(6) << golesHoyE2
+            << "|" << left << setw(12) << e2->obtenerGoleador(iteraciones, totalMemoria)
+             << "|" << right << setw(1) << endl;
+
+      // /*  cout << left << setw(15) << e1->getPais() << " (" << golesHoyE1 << ") vs ("
+      //        << golesHoyE2 << ") " << right << setw(15) << e2->getPais()
+      //        << " | Goleador: " << e1->obtenerGoleador() << end*/;
 
         delete[] indicesE1;
         delete[] indicesE2;
     }
 
+    cout << "---------------------------------------------------------------------------------------" << endl;
     totalMemoria += sizeof(ganadores) * numPartidos;
     return ganadores;
 }

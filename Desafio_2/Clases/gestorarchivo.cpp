@@ -3,7 +3,7 @@
 
 using namespace std;
 
-GestorArchivo::GestorArchivo(const string &nomArcEquipos, long & iteraciones, long &totalMemoria)  {
+GestorArchivo::GestorArchivo(const string &nomArcEquipos, int &iteraciones, int &totalMemoria)  {
     ifstream archivo(nomArcEquipos);
     string     linea;
     short         cont = 0;
@@ -19,7 +19,7 @@ GestorArchivo::GestorArchivo(const string &nomArcEquipos, long & iteraciones, lo
 }
 
 
-void GestorArchivo::cargarEquipos(Equipo*& equipos, const string& nombreArchivo, long &iteraciones, long &totalMemoria){
+void GestorArchivo::cargarEquipos(Equipo*& equipos, const string& nombreArchivo, int &iteraciones, int &totalMemoria){
     ifstream archivo(nombreArchivo);
     string    linea;
     short     indexEquipos = 0;
@@ -66,7 +66,7 @@ void GestorArchivo::cargarEquipos(Equipo*& equipos, const string& nombreArchivo,
     archivo.close();
 }
 
-void GestorArchivo::guardarEquipos(Equipo*& equipos, const string& nombreArchivo) {
+void GestorArchivo::guardarEquipos(Equipo*& equipos, const string& nombreArchivo, int &iteraciones) {
     
     ofstream archivo(nombreArchivo);
 
@@ -75,11 +75,11 @@ void GestorArchivo::guardarEquipos(Equipo*& equipos, const string& nombreArchivo
         return;
     }
 
-
     archivo << "Ranking;Pais;Director;Federacion;Confederacion;GolesAFavor;GolesEnContra;PartidosGanados;PartidosEmpatados;PartidosPerdidos" << endl;
 
 
     for (short i = 0; i < this->getNumeroDeEquipos(); i++) {
+        iteraciones++;
         archivo << equipos[i].getRankinFifa() << ";"
                 << equipos[i].getPais() << ";"
                 << equipos[i].getDirector() << ";"
@@ -100,11 +100,40 @@ void GestorArchivo::guardarEquipos(Equipo*& equipos, const string& nombreArchivo
     cout << "Datos de equipos actualizados correctamente en: " << nombreArchivo << endl;
 }
 
+void GestorArchivo::guardarEquipos(Equipo*& equipos, const string& nombreArchivo, int &iteraciones, bool jugadores){
+    ofstream archivo(nombreArchivo);
+    string titulo = "Pais";
 
-void GestorArchivo::guardarJugadores(Jugador *& jugadores, const string& nombreArchivo){
+    if (!archivo.is_open()) {
+        cout << "ERROR: No se pudo abrir el archivo para guardar jugadores." << endl;
+        return;
+    }
 
+    for (short c = 0; c < 26; c++){
+        iteraciones++;
+        titulo += ";Camisa " +  to_string(c + 1) +";# goles" + to_string(c + 1) + "; Amarillas" + to_string(c + 1) + "; Rojas" +  to_string(c + 1);
+    }
+
+    archivo << titulo << endl;
+
+    for (short c = 0; c < this->getNumeroDeEquipos(); c++){
+        iteraciones++;
+        archivo << equipos[c].getPais() << ";";
+
+        for (short i = 0; i < 26; i++){
+            iteraciones++;
+            archivo << equipos[c].getJuagores()[i].getNumeroCamisa() << ";"
+                    << equipos[c].getJuagores()[i].getNumeroGoles() << ";"
+                    << equipos[c].getJuagores()[i].getCaTarAmarilla() << ";"
+                    << equipos[c].getJuagores()[i].getCaTarRojas() << ";";
+        }
+
+        archivo << endl;
+    }
+
+     cout << "Datos de jugadores actualizados correctamente en: " << nombreArchivo << endl;
+    archivo.close();
 }
-
 
 short GestorArchivo::getNumeroDeEquipos() const
 {

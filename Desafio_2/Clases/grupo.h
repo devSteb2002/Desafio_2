@@ -7,7 +7,8 @@
 class Grupo{
     public:
     Grupo();
-        void  selecEquipos(short (&bombos)[4][12], Equipo*& listaEquipos, const short &numEquipos);
+        void  selecEquipos(short (&bombos)[4][12], Equipo*& listaEquipos, const short &numEquipos,  int &iteraciones, int& totalMemoria);
+        void ordenarPorPuntos(Equipo* listaGlobalEquipos, short totalEquipos, int &iteraciones, int& totalMemoria);
 
         char getId() const;
         void setId(char newId);
@@ -16,8 +17,6 @@ class Grupo{
 
         short *getEquiposRF() const;
         void setEquiposRF(short *newEquiposRF);
-
-        void ordenarPorPuntos(Equipo* listaGlobalEquipos, short totalEquipos);
 
          ~Grupo();
     private:
