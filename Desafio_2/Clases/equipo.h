@@ -10,9 +10,9 @@ class Equipo {
     public:
         Equipo();
 
-        void seleccionarJugadores(short *& listaJugadores);
-        void metricasJugadores(short *& listaJugadores, const float& golesEsperados, const string&etapa,long& iteraciones, long& totalMemoria);
-        short obtenerGoleador();
+        void seleccionarJugadores(short *& listaJugadores, int& iteraciones, int& totalMemoria);
+        void metricasJugadores(short *& listaJugadores, const float& golesEsperados, const string&etapa,int& iteraciones, int& totalMemoria);
+        short obtenerGoleador(int& iteraciones, int& totalMemoria);
 
         string getConfederacion() const;
         void setConfederacion(const string &newConfederacion);

@@ -3,7 +3,7 @@
 
 Grupo::Grupo() {}
 
-void  Grupo::selecEquipos(short (&bombos)[4][12], Equipo *&listaEquipos, const short& numEquipos ){
+void  Grupo::selecEquipos(short (&bombos)[4][12], Equipo *&listaEquipos, const short& numEquipos , int &iteraciones, int &totalMemoria){
 
     short  bomboFial = 0;
     short *equipos = new short[4];
@@ -13,11 +13,16 @@ void  Grupo::selecEquipos(short (&bombos)[4][12], Equipo *&listaEquipos, const s
     mt19937 gen(rd());
     uniform_int_distribution<> dis(0, 11);
 
+    totalMemoria += sizeof(bomboFial) + sizeof(equipos)*4 + sizeof(random) +
+                    sizeof(string) *4 + sizeof(bool) + sizeof(short) *2 +sizeof(bool)*2;
+
     while (bomboFial < 4){ // generacion aleatoria de los equipos segun este grupo
+        iteraciones++;
         string confederaciones[4] = {"", "", "", ""};
         bool   confValidas = true;
 
         for (short c = 0; c < 4; c++){
+            iteraciones++;
             if (confederaciones[c] == "") {
                 confValidas = false;
                 break;
@@ -25,6 +30,7 @@ void  Grupo::selecEquipos(short (&bombos)[4][12], Equipo *&listaEquipos, const s
         }
 
         while (!confValidas){
+            iteraciones++;
             random = dis(gen);
 
             if (bombos[bomboFial][random] == -1) continue;
@@ -35,6 +41,7 @@ void  Grupo::selecEquipos(short (&bombos)[4][12], Equipo *&listaEquipos, const s
             short cuantosUEFA = 0;
 
             for (short c = 0; c < numEquipos; c++){
+                iteraciones++;
                 if (listaEquipos[c].getRankinFifa() == rankingFifa){          
                     confederaciones[bomboFial] = listaEquipos[c].getConfederacion();
                     encontrado = true;
@@ -44,9 +51,13 @@ void  Grupo::selecEquipos(short (&bombos)[4][12], Equipo *&listaEquipos, const s
 
             if(!encontrado) continue;
 
-            for (short c = 0; c < 4; c++) if (confederaciones[c] == "UEFA") cuantosUEFA++;
+            for (short c = 0; c < 4; c++){
+                iteraciones++;
+                if (confederaciones[c] == "UEFA") cuantosUEFA++;
+            }
 
             for (short c = 0; c < 4; c++){
+                iteraciones++;
                 if (confederaciones[c] == "") continue;
 
                 if (c != bomboFial && confederaciones[c] == confederaciones[bomboFial]) {
@@ -73,6 +84,7 @@ void  Grupo::selecEquipos(short (&bombos)[4][12], Equipo *&listaEquipos, const s
     //hacer que el equipo de USA quede en el bombo 1
     short rankingFifaUsa;
     for (short f = 0; f < numEquipos; f++){
+        iteraciones++;
         if (listaEquipos[f].getPais() == "United States"){
             rankingFifaUsa = listaEquipos[f].getRankinFifa();
             break;
@@ -80,6 +92,7 @@ void  Grupo::selecEquipos(short (&bombos)[4][12], Equipo *&listaEquipos, const s
     }
 
     for (short c = 0; c < 4; c++){
+        iteraciones++;
         if (equipos[c] == rankingFifaUsa && c > 0){
             short tempRanking = equipos[0];
             equipos[0] = rankingFifaUsa;
@@ -87,12 +100,13 @@ void  Grupo::selecEquipos(short (&bombos)[4][12], Equipo *&listaEquipos, const s
             break;
         }
     }
+    totalMemoria += sizeof(rankingFifaUsa) + sizeof(short);
 
     this->equiposRF = equipos;
 }
 
 
-void Grupo::ordenarPorPuntos(Equipo* listaGlobalEquipos, short totalEquipos) {
+void Grupo::ordenarPorPuntos(Equipo* listaGlobalEquipos, short totalEquipos, int &iteraciones, int &totalMemoria) {
     // Usamos burbuja para ordenar los 4 equipos guardados en equiposRF
     for (short i = 0; i < 3; i++) {
         for (short j = 0; j < 3 - i; j++) {

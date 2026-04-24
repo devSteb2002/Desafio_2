@@ -5,10 +5,10 @@
 
 class GestorArchivo{
     public:
-        GestorArchivo(const string &nomArcEquipos, long & iteraciones, long &totalMemoria);
-        void cargarEquipos( Equipo*& equipos, const string& nombreArchivo, long & iteraciones, long &totalMemoria);
-        void guardarEquipos(Equipo*& equipos, const string& nombreArchivo );
-        void guardarJugadores(Jugador *& jugadores, const string& nombreArchivo);
+        GestorArchivo(const string &nomArcEquipos, int& iteraciones, int &totalMemoria);
+        void cargarEquipos( Equipo*& equipos, const string& nombreArchivo, int & iteraciones, int &totalMemoria);
+        void guardarEquipos(Equipo*& equipos, const string& nombreArchivo, int & iteraciones);
+        void guardarEquipos(Equipo*& equipos, const string& nombreArchivo, int & iteraciones, bool jugadores);
 
         short getNumeroDeEquipos() const;
         void setNumeroDeEquipos(short newNumeroDeEquipos);
