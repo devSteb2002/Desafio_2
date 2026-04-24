@@ -328,7 +328,7 @@ int main()
         }
 
         cout << "---------------------------------------------------------------------";
-        //cout << endl;
+        
     }
     cout << endl;
 
@@ -440,8 +440,6 @@ int main()
              << "|" << left << setw(2) << " (C vs T)"
              << right << setw(3) << "|" << endl;
     }
-
-
     for (short i = 8; i < 12; i++) {
         cout << "|" << left << setw(5) << numP++
              << "|" << left << setw(20) << cabezas[i]->getPais()
@@ -450,8 +448,6 @@ int main()
              << "|" << left << setw(2) << " (C vs S)"
              << right << setw(3) << "|" << endl;
     }
-
-
     for (short i = 0; i < 4; i++) {
         cout << "|" << left << setw(5) << numP++
              << "|" << left << setw(20) << segundos[i]->getPais()
@@ -514,10 +510,7 @@ int main()
     cout << "Total memoria usada: " << totalMemoria  << " KB" << endl;
     cout << endl;
 
-  
-
     cout << "\n--- ESTADISTICAS FINALES DEL TORNEO ---" << endl;
-
 
     cout << "1. Ranking de Honor:" << endl;
     cout << "   1ro: " << podio[0]->getPais() << endl;
@@ -525,77 +518,55 @@ int main()
     cout << "   3ro: " << tercerLugarArreglo[0]->getPais() << endl;
     cout << "   4to: " << (tercerLugarArreglo[0] == perdedoresSemis[0] ? perdedoresSemis[1]->getPais() : perdedoresSemis[0]->getPais()) << endl;
 
-
-    cout << "2. Goleador del Campeon: Dorsal " << podio[0]->obtenerGoleador() << " de " << podio[0]->getPais() << endl;
-
+    cout << "\n2. Goleador del Campeon: Dorsal " << podio[0]->obtenerGoleador() << " de " << podio[0]->getPais() << endl;
 
     cout << "3. Top 3 Goleadores del Torneo:" << endl;
-
-
     Equipo* subcampeon = (podio[0] == finalistas[0] ? finalistas[1] : finalistas[0]);
-
     cout << "   1ro: Dorsal " << podio[0]->obtenerGoleador() << " (" << podio[0]->getPais() << ")" << endl;
     cout << "   2do: Dorsal " << subcampeon->obtenerGoleador() << " (" << subcampeon->getPais() << ")" << endl;
     cout << "   3ro: Dorsal " << tercerLugarArreglo[0]->obtenerGoleador() << " (" << tercerLugarArreglo[0]->getPais() << ")" << endl;
 
-    // 4. Equipo con más goles históricos
+
     Equipo* masGoles = &listaEquipos[0];
     for(int i = 1; i < numeroEquipos; i++) {
         if(listaEquipos[i].getGolesAFavor() > masGoles->getGolesAFavor()) {
             masGoles = &listaEquipos[i];
         }
     }
-    cout << "4. Equipo con mas goles totales: " << masGoles->getPais() << " (" << masGoles->getGolesAFavor() << " goles)" << endl;
+    cout << "\n4. Equipo con mas goles totales: " << masGoles->getPais() << " (" << masGoles->getGolesAFavor() << " goles)" << endl;
 
-    cout << "4. Confederacion dominante por etapa:" << endl;
 
-    string nombresConf[] = {"UEFA", "CONMEBOL", "CONCACAF", "AFC", "CAF", "OFC"};
+    cout << "\n5. Confederacion con mayor presencia por etapa:" << endl;
+    string nombresC[] = {"UEFA", "CONMEBOL", "CONCACAF", "AFC", "CAF", "OFC"};
 
-  
-    int conteosR16[6] = {0, 0, 0, 0, 0, 0};
-    for(int i = 0; i < 32; i++) {
-        string c = lista32[i]->getConfederacion();
-        for(int k=0; k<6; k++) if(c == nombresConf[k]) conteosR16[k]++;
-    }
-    int maxR16 = 0;
-    for(int i = 1; i < 6; i++) if(conteosR16[i] > conteosR16[maxR16]) maxR16 = i;
-    cout << "   En Dieciseisavos (R16): " << nombresConf[maxR16] << endl;
 
- 
-    int conteosR8[6] = {0, 0, 0, 0, 0, 0};
-    for(int i = 0; i < 16; i++) {
-        string c = ganadores16[i]->getConfederacion();
-        for(int k=0; k<6; k++) if(c == nombresConf[k]) conteosR8[k]++;
-    }
-    int maxR8 = 0;
-    for(int i = 1; i < 6; i++) if(conteosR8[i] > conteosR8[maxR8]) maxR8 = i;
-    cout << "   En Octavos (R8):        " << nombresConf[maxR8] << endl;
+    int c32[6] = {0};
+    for(int i=0; i<32; i++) for(int k=0; k<6; k++) if(lista32[i]->getConfederacion() == nombresC[k]) c32[k]++;
+    int m32=0; for(int i=1; i<6; i++) if(c32[i] > c32[m32]) m32=i;
+    cout << "   En Dieciseisavos (R32): " << nombresC[m32] << endl;
 
-    
-    int conteosR4[6] = {0, 0, 0, 0, 0, 0};
-    for(int i = 0; i < 8; i++) {
-        string c = ganadores8[i]->getConfederacion();
-        for(int k=0; k<6; k++) if(c == nombresConf[k]) conteosR4[k]++;
-    }
-    int maxR4 = 0;
-    for(int i = 1; i < 6; i++) if(conteosR4[i] > conteosR4[maxR4]) maxR4 = i;
-    cout << "   En Cuartos (R4):        " << nombresConf[maxR4] << endl;
 
-    
-    int conteosR2[6] = {0, 0, 0, 0, 0, 0};
-    for(int i = 0; i < 4; i++) {
-        string c = ganadores4[i]->getConfederacion();
-        for(int k=0; k<6; k++) if(c == nombresConf[k]) conteosR2[k]++;
-    }
-    int maxR2 = 0;
-    for(int i = 1; i < 6; i++) if(conteosR2[i] > conteosR2[maxR2]) maxR2 = i;
-    cout << "   En Semifinales (R2):    " << nombresConf[maxR2] << endl;
+    int c16[6] = {0};
+    for(int i=0; i<16; i++) for(int k=0; k<6; k++) if(ganadores16[i]->getConfederacion() == nombresC[k]) c16[k]++;
+    int m16=0; for(int i=1; i<6; i++) if(c16[i] > c16[m16]) m16=i;
+    cout << "   En Octavos (R16):       " << nombresC[m16] << endl;
 
-    gestorArchivo->guardarEquipos(listaEquipos, "ESTE_ES_EL_NUEVO.csv");
+
+    int c8[6] = {0};
+    for(int i=0; i<8; i++) for(int k=0; k<6; k++) if(ganadores8[i]->getConfederacion() == nombresC[k]) c8[k]++;
+    int m8=0; for(int i=1; i<6; i++) if(c8[i] > c8[m8]) m8=i;
+    cout << "   En Cuartos (R8):        " << nombresC[m8] << endl;
+
+
+    int c4[6] = {0};
+    for(int i=0; i<4; i++) for(int k=0; k<6; k++) if(ganadores4[i]->getConfederacion() == nombresC[k]) c4[k]++;
+    int m4=0; for(int i=1; i<6; i++) if(c4[i] > c4[m4]) m4=i;
+    cout << "   En Semifinales (R4):    " << nombresC[m4] << endl;
 
 
 
 
+    gestorArchivo->guardarEquipos(listaEquipos, "resultado_mundial_final.csv");
 
     delete[] perdedoresSemis;
     delete[] tercerLugarArreglo;
@@ -605,22 +576,15 @@ int main()
     delete[] finalistas;
     delete[] podio;
     delete[] lista32;
+
+
     delete[] terceros;
     delete[] clasificados32;
 
     delete gestorArchivo;
-
     delete[] listaEquipos;
     delete[] listaGrupos;
-
 
     cout << "\n--- PROGRAMA FINALIZADO CON EXITO ---" << endl;
     return 0;
 }
-
-
-
-    
-    
-    
-
