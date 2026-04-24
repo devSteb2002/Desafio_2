@@ -21,7 +21,7 @@ void Partido::generarFecha(const short &dia){
     }
 }
 
-void Partido::simularOcurrencia(Equipo *& listaEquipos, const short &numEquipos, const string &etapa){
+void Partido::simularOcurrencia(Equipo *& listaEquipos, const short &numEquipos, const string &etapa, long &iteraciones, long &totalMemoria){
     const float u = 1.35;
     const float a = 0.6;
     const float B = 0.4;
@@ -29,6 +29,7 @@ void Partido::simularOcurrencia(Equipo *& listaEquipos, const short &numEquipos,
     float golesEsperadosEquipo2 = 0.0;
 
     for (short i = 0; i < numEquipos; i++){
+        iteraciones++;
         if (listaEquipos[i].getRankinFifa() == this->rankingFifaequip1){
             const short golesAFavor    = listaEquipos[i].getGolesAFavor();
             const short golesEnContra = listaEquipos[i].getGolesEnContra();
@@ -48,6 +49,7 @@ void Partido::simularOcurrencia(Equipo *& listaEquipos, const short &numEquipos,
     short *listaJugadoresB = new short[11];
 
     for (short i = 0; i < numEquipos; i++){
+        iteraciones++;
         if (listaEquipos[i].getRankinFifa() == this->rankingFifaequip1){
             if (goleEsperadosEquipo1 > golesEsperadosEquipo2){
                 listaEquipos[i].setPartidosGanados(listaEquipos[i].getPartidosGanados() + 1);
@@ -59,7 +61,7 @@ void Partido::simularOcurrencia(Equipo *& listaEquipos, const short &numEquipos,
 
             listaEquipos[i].setPartidosJugados(listaEquipos[i].getPartidosJugados() + 1);
             listaEquipos[i].seleccionarJugadores(listaJugadoresA);
-            listaEquipos[i].metricasJugadores(listaJugadoresA, goleEsperadosEquipo1, etapa);
+            listaEquipos[i].metricasJugadores(listaJugadoresA, goleEsperadosEquipo1, etapa, iteraciones, totalMemoria);
         }
 
         if (listaEquipos[i].getRankinFifa() == this->rankingFifaequip2){
@@ -73,12 +75,9 @@ void Partido::simularOcurrencia(Equipo *& listaEquipos, const short &numEquipos,
 
             listaEquipos[i].setPartidosJugados(listaEquipos[i].getPartidosJugados() + 1);
             listaEquipos[i].seleccionarJugadores(listaJugadoresB);
-            listaEquipos[i].metricasJugadores(listaJugadoresB, golesEsperadosEquipo2, etapa);
+            listaEquipos[i].metricasJugadores(listaJugadoresB, golesEsperadosEquipo2, etapa, iteraciones, totalMemoria);
         }
     }
-
-
-
 
     delete[] listaJugadoresA;
     delete[] listaJugadoresB;
@@ -184,10 +183,7 @@ void Partido::setDia(short newDia)
 {
     dia = newDia;
 }
-
-
-Equipo** Partido::simularEtapaMataMata(Equipo** participantes, short numPartidos, string nombreEtapa, Equipo* listaTotal, short totalE) {
-   
+Equipo** simularEtapaMataMata(Equipo** participantes, short numPartidos, string nombreEtapa, Equipo* listaTotal, short totalE, long &iteraciones, long&totalMemoria) {
     Equipo** ganadores = new Equipo*[numPartidos];
 
     cout << "\n==========================================================" << endl;
@@ -195,7 +191,7 @@ Equipo** Partido::simularEtapaMataMata(Equipo** participantes, short numPartidos
     cout << "==========================================================" << endl;
 
     for (short i = 0; i < numPartidos; i++) {
-        
+        iteraciones++;
         Equipo* e1 = participantes[i * 2];
         Equipo* e2 = participantes[i * 2 + 1];
 
@@ -214,15 +210,13 @@ Equipo** Partido::simularEtapaMataMata(Equipo** participantes, short numPartidos
         short golesAntesE1 = e1->getGolesAFavor();
         short golesAntesE2 = e2->getGolesAFavor();
 
-       
-        p.simularOcurrencia(listaTotal, totalE, "EL");
+        p.simularOcurrencia(listaTotal, totalE, "EL", iteraciones, totalMemoria);
 
         short golesHoyE1 = e1->getGolesAFavor() - golesAntesE1;
         short golesHoyE2 = e2->getGolesAFavor() - golesAntesE2;
 
-        
-        e1->metricasJugadores(indicesE1, (float)golesHoyE1, nombreEtapa);
-        e2->metricasJugadores(indicesE2, (float)golesHoyE2, nombreEtapa);
+        e1->metricasJugadores(indicesE1, (float)golesHoyE1, nombreEtapa, iteraciones, totalMemoria);
+        e2->metricasJugadores(indicesE2, (float)golesHoyE2, nombreEtapa, iteraciones, totalMemoria);
 
         
         if (golesHoyE1 == golesHoyE2) {
@@ -256,5 +250,7 @@ Equipo** Partido::simularEtapaMataMata(Equipo** participantes, short numPartidos
         delete[] indicesE1;
         delete[] indicesE2;
     }
+
+    totalMemoria += sizeof(ganadores) * numPartidos;
     return ganadores;
 }

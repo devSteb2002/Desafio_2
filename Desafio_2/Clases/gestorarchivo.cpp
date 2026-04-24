@@ -3,29 +3,31 @@
 
 using namespace std;
 
-GestorArchivo::GestorArchivo(const string &nomArcEquipos)  {
+GestorArchivo::GestorArchivo(const string &nomArcEquipos, long & iteraciones, long &totalMemoria)  {
     ifstream archivo(nomArcEquipos);
     string     linea;
-    int         cont = 0;
+    short         cont = 0;
 
     if (!archivo.is_open()) return;
     while (getline(archivo, linea)) if (isdigit(linea[0])) cont++;
 
     this->setNumeroDeEquipos(cont);
 
+    totalMemoria = totalMemoria + sizeof(cont) + sizeof(linea);
+    iteraciones = cont;
     archivo.close();
 }
 
 
-void GestorArchivo::cargarEquipos( Equipo*& equipos, const string& nombreArchivo){
+void GestorArchivo::cargarEquipos(Equipo*& equipos, const string& nombreArchivo, long &iteraciones, long &totalMemoria){
     ifstream archivo(nombreArchivo);
     string    linea;
     short     indexEquipos = 0;
-    short     numerodeCara  = 0;
 
     if (!archivo.is_open()) return;
 
     while (getline(archivo, linea)){
+        iteraciones++;
 
         if (!isdigit(linea[0]) || linea.empty()) continue;
 
@@ -34,6 +36,7 @@ void GestorArchivo::cargarEquipos( Equipo*& equipos, const string& nombreArchivo
         short   indexCaracter = 0;
 
         while (numOcurrecias < 10){
+            iteraciones++;
 
             size_t   posicion1 = formatLinea.find(";", indexCaracter);
             size_t   posicion2 = formatLinea.find(";", posicion1 + 1);
@@ -59,7 +62,7 @@ void GestorArchivo::cargarEquipos( Equipo*& equipos, const string& nombreArchivo
          indexEquipos++;
     }
 
-
+    totalMemoria += sizeof(linea) + sizeof(indexEquipos) + 4 + 24 + 16;
     archivo.close();
 }
 
@@ -98,11 +101,9 @@ void GestorArchivo::guardarEquipos(Equipo*& equipos, const string& nombreArchivo
 }
 
 
-
 void GestorArchivo::guardarJugadores(Jugador *& jugadores, const string& nombreArchivo){
 
 }
-
 
 
 short GestorArchivo::getNumeroDeEquipos() const

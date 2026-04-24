@@ -11,7 +11,7 @@ class Equipo {
         Equipo();
 
         void seleccionarJugadores(short *& listaJugadores);
-        void metricasJugadores(short *& listaJugadores, const float& golesEsperados, const string&etapa);
+        void metricasJugadores(short *& listaJugadores, const float& golesEsperados, const string&etapa,long& iteraciones, long& totalMemoria);
         short obtenerGoleador();
 
         string getConfederacion() const;

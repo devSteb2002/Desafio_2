@@ -91,39 +91,12 @@ void  Grupo::selecEquipos(short (&bombos)[4][12], Equipo *&listaEquipos, const s
     this->equiposRF = equipos;
 }
 
-Grupo::~Grupo(){
-    if (this->equiposRF != nullptr){
-        delete[] this->equiposRF;
-    }
-}
-
-
-char Grupo::getId() const
-{
-    return id;
-}
-
-void Grupo::setId(char newId)
-{
-    id = newId;
-}
-
-short *Grupo::getEquiposRF() const
-{
-    return equiposRF;
-}
-
-void Grupo::setEquiposRF(short *newEquiposRF)
-{
-    equiposRF = newEquiposRF;
-}
-
 
 void Grupo::ordenarPorPuntos(Equipo* listaGlobalEquipos, short totalEquipos) {
     // Usamos burbuja para ordenar los 4 equipos guardados en equiposRF
     for (short i = 0; i < 3; i++) {
         for (short j = 0; j < 3 - i; j++) {
-            
+
             // Buscamos los punteros a los objetos Equipo correspondientes a los Rankings en la lista global
             Equipo* eqA = nullptr;
             Equipo* eqB = nullptr;
@@ -164,3 +137,33 @@ void Grupo::ordenarPorPuntos(Equipo* listaGlobalEquipos, short totalEquipos) {
         }
     }
 }
+
+Grupo::~Grupo(){
+    if (this->equiposRF != nullptr){
+        delete[] this->equiposRF;
+    }
+}
+
+
+char Grupo::getId() const
+{
+    return id;
+}
+
+void Grupo::setId(char newId)
+{
+    id = newId;
+}
+
+short *Grupo::getEquiposRF() const
+{
+    return equiposRF;
+}
+
+void Grupo::setEquiposRF(short *newEquiposRF)
+{
+    equiposRF = newEquiposRF;
+}
+
+
+
