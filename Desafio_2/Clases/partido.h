@@ -32,6 +32,7 @@ class Partido{
 
         short getDia() const;
         void setDia(short newDia);
+        static Equipo** simularEtapaMataMata(Equipo** participantes, short numPartidos,std::string nombreEtapa, Equipo* listaTotal, short totalEquipos);
 
     private:
         string    fecha;
@@ -46,6 +47,6 @@ class Partido{
         short     dia = 0;
 };
 
-Equipo** simularEtapaMataMata(Equipo** participantes, short numPartidos, string nombreEtapa, Equipo* listaTotal, short totalE);
+
 
 #endif // PARTIDO_H
